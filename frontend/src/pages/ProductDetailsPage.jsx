@@ -7,6 +7,7 @@ import { formatCurrency } from '../utils/formatCurrency';
 import PriceChart from '../components/PriceChart';
 import BuyBadge from '../components/BuyBadge';
 import ProductReviews from '../components/ProductReviews';
+import TrackPriceButton from '../components/TrackPriceButton';
 
 const ProductDetailsPage = () => {
     const { id } = useParams();
@@ -213,6 +214,11 @@ const ProductDetailsPage = () => {
                                         )}
                                     </div>
                                 </div>
+                            </div>
+
+                            {/* Tracking Button */}
+                            <div className="mt-8 flex justify-start">
+                                <TrackPriceButton productId={product._id} currentPrice={product.price} />
                             </div>
                         </div>
                     </div>

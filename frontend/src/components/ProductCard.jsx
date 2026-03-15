@@ -1,16 +1,29 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
 import { useCurrency } from '../context/CurrencyContext';
 import { formatCurrency } from '../utils/formatCurrency';
+import { useCompare } from '../context/CompareContext';
+import { Layers, CheckCircle2 } from 'lucide-react';
 
 const ProductCard = ({ product }) => {
     const { currency } = useCurrency();
+    const { compareItems, addToCompare, removeFromCompare } = useCompare();
+
+    const isComparing = compareItems.find(item => item._id === product._id);
 
     // Calculate best price
     const bestPrice = product.marketplaces?.length > 0 
         ? Math.min(...product.marketplaces.map(m => m.price))
         : (product.price || 0);
+
+    const handleCompare = (e) => {
+        e.preventDefault();
+        if (isComparing) {
+            removeFromCompare(product._id);
+        } else {
+            addToCompare(product);
+        }
+    };
     
     return (
         <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-indigo-500/60 dark:hover:border-indigo-400/60 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col overflow-hidden group">
@@ -32,12 +45,19 @@ const ProductCard = ({ product }) => {
                             📉 Price Dropping
                         </span>
                     )}
-                    {product.analytics?.buyRecommendation === 'wait' && (
-                        <span className="inline-flex items-center px-2.5 py-1 rounded bg-amber-100/90 text-amber-800 border border-amber-200 shadow-sm text-xs font-bold backdrop-blur-sm dark:bg-amber-500/20 dark:text-amber-400 dark:border-amber-500/30">
-                            ⏳ Wait for Drop
-                        </span>
-                    )}
                 </div>
+
+                <button 
+                    onClick={handleCompare}
+                    className={`absolute top-3 right-3 p-2 rounded-full backdrop-blur-md shadow-sm border transition-all ${
+                        isComparing 
+                        ? 'bg-indigo-600 border-indigo-500 text-white' 
+                        : 'bg-white/90 dark:bg-gray-800/90 border-gray-100 dark:border-gray-600 text-gray-500 hover:text-indigo-600'
+                    }`}
+                    title={isComparing ? "Remove from compare" : "Add to compare"}
+                >
+                    {isComparing ? <CheckCircle2 className="w-4 h-4" /> : <Layers className="w-4 h-4" />}
+                </button>
             </div>
 
             <div className="p-5 flex flex-col flex-1 gap-3">
@@ -60,7 +80,7 @@ const ProductCard = ({ product }) => {
 
                     {product.marketplaces?.length > 0 && (
                          <div className="space-y-1.5 pt-3 border-t border-gray-100 dark:border-gray-700">
-                             {product.marketplaces.slice(0, 3).map((m, i) => (
+                             {product.marketplaces.slice(0, 2).map((m, i) => (
                                  <div key={i} className="flex justify-between items-center text-sm">
                                      <span className="text-gray-600 dark:text-gray-400 capitalize">{m.name}</span>
                                      <span className="font-semibold text-gray-900 dark:text-white">{formatCurrency(m.price, currency)}</span>
@@ -70,13 +90,23 @@ const ProductCard = ({ product }) => {
                     )}
                 </div>
 
-                <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+                <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex gap-2">
                     <Link
                         to={`/products/${product._id}`}
-                        className="w-full inline-flex items-center justify-center px-4 py-2.5 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-500/10 dark:hover:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 font-bold rounded-lg transition-colors border border-transparent hover:border-indigo-200 dark:hover:border-indigo-800/50"
+                        className="flex-1 inline-flex items-center justify-center px-4 py-2.5 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-500/10 dark:hover:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 font-bold rounded-lg transition-colors border border-transparent hover:border-indigo-200 dark:hover:border-indigo-800/50 text-sm"
                     >
-                        Compare Prices <ArrowRight className="w-4 h-4 ml-2" />
+                        Intelligence
                     </Link>
+                    <button
+                        onClick={handleCompare}
+                        className={`px-4 py-2.5 rounded-lg border font-bold text-sm transition-all ${
+                            isComparing
+                            ? 'bg-indigo-600 border-indigo-600 text-white'
+                            : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-indigo-500'
+                        }`}
+                    >
+                        {isComparing ? "In Compare" : "Compare"}
+                    </button>
                 </div>
             </div>
         </div>
