@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { useCurrency } from '../context/CurrencyContext';
-import { Sun, Moon, ShoppingCart, IndianRupee, DollarSign, Search } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useCompare } from '../context/CompareContext';
+import { Sun, Moon, ShoppingCart, IndianRupee, DollarSign, Search, Bell, Layers } from 'lucide-react';
 
 const Navbar = () => {
     const { isDarkMode, toggleTheme } = useTheme();
     const { currency, toggleCurrency } = useCurrency();
+    const { compareItems } = useCompare();
     const navigate = useNavigate();
     const [query, setQuery] = useState('');
 
@@ -32,6 +34,20 @@ const Navbar = () => {
                     <div className="flex items-center space-x-6">
                         <Link to="/products" className="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-medium transition-colors hidden sm:block">
                             Products
+                        </Link>
+
+                        <Link to="/watchlist" className="text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-medium transition-colors hidden sm:block">
+                            Watchlist
+                        </Link>
+
+                        <Link to="/compare" className="relative group text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-medium transition-colors hidden sm:block">
+                            <Layers className="w-5 h-5 inline-block mr-1 opacity-70 group-hover:opacity-100" />
+                            Compare
+                            {compareItems.length > 0 && (
+                                <span className="absolute -top-2 -right-3 px-1.5 py-0.5 text-[10px] font-black bg-indigo-600 text-white rounded-full shadow-lg border border-white dark:border-gray-800">
+                                    {compareItems.length}
+                                </span>
+                            )}
                         </Link>
 
                         <form onSubmit={handleSearch} className="relative hidden md:block w-64">
