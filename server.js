@@ -6,6 +6,8 @@ import { errorHandler } from "./middleware/errorHandler.js";
 import { startPriceTrackerJob } from "./cron/priceTracker.job.js";
 import productRoutes from "./routes/product.routes.js";
 import searchRoutes from "./routes/search.routes.js";
+import authRoutes from "./routes/auth.routes.js";
+import watchlistRoutes from "./routes/watchlist.routes.js";
 
 dotenv.config();
 
@@ -36,7 +38,8 @@ app.get("/api/health", (req, res) => {
 // ── Feature routes ────────────────────────────────────────────────────────────
 app.use("/api/products", productRoutes);
 app.use("/api/search", searchRoutes);
-// app.use("/api/auth", authRoutes);   ← uncomment when auth controller is ready
+app.use("/api/auth", authRoutes);
+app.use("/api/watchlist", watchlistRoutes);
 
 // ── 404 catch-all ────────────────────────────────────────────────────────────
 app.use((req, res) => {
