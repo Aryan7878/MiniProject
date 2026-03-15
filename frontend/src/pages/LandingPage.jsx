@@ -74,83 +74,115 @@ const LandingPage = () => {
     );
 
     return (
-        <div className="space-y-16 py-8 animate-in fade-in duration-500">
+        <div className="space-y-24 py-8 animate-in fade-in duration-1000">
             
-            {/* Large Centered Hero Search Section */}
-            <section className="text-center space-y-8 max-w-4xl mx-auto">
-                <h1 className="text-5xl md:text-6xl font-extrabold text-gray-900 dark:text-white tracking-tight">
-                    Smarter shopping with <span className="text-indigo-600 dark:text-indigo-400">Intelligence.</span>
-                </h1>
-                <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-                    AI-driven price tracking, trend analysis, and actionable buy recommendations to guarantee you never overpay again.
-                </p>
+            {/* 🌌 Ultra-Modern Hero Section */}
+            <section className="relative text-center space-y-12 max-w-5xl mx-auto pt-10">
+                {/* Background Glow */}
+                <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-indigo-500/10 blur-[120px] rounded-full -z-10 pointer-events-none"></div>
 
-                <form onSubmit={handleSearch} className="flex max-w-xl mx-auto gap-3 mt-6">
-                    <div className="relative flex-1">
-                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
+                <div className="space-y-6">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20 mb-4 animate-bounce">
+                        <Activity className="w-4 h-4 text-indigo-600" />
+                        <span className="text-xs font-black text-indigo-700 dark:text-indigo-300 uppercase tracking-widest">Real-time Intelligence Active</span>
+                    </div>
+                    
+                    <h1 className="text-6xl md:text-8xl font-black text-gray-900 dark:text-white tracking-tighter leading-[0.9]">
+                        Shop with <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-500">Superhuman</span> <br /> 
+                        <span className="italic">Data.</span>
+                    </h1>
+                    
+                    <p className="text-lg md:text-xl text-gray-500 dark:text-gray-400 max-w-3xl mx-auto font-medium leading-relaxed">
+                        SmartCart is more than a dashboard. It's an AI-driven price engine that monitors 10+ marketplaces simultaneously to find you the absolute mathematical best time to buy.
+                    </p>
+                </div>
+
+                <form onSubmit={handleSearch} className="flex max-w-2xl mx-auto gap-3 p-3 bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-2xl border border-gray-100 dark:border-gray-700 focus-within:ring-8 focus-within:ring-indigo-500/10 transition-all">
+                    <div className="relative flex-1 flex items-center pl-6">
+                        <Search className="h-6 w-6 text-indigo-500 pointer-events-none" />
                         <input
                             type="text"
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
-                            placeholder="Search iPhone 15 Pro, Samsung TV..."
-                            className="w-full pl-11 pr-4 py-4 rounded-xl border-2 border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-500 shadow-md text-lg transition-all"
+                            placeholder="Find any product across Amazon, Flipkart, Croma..."
+                            className="w-full bg-transparent px-4 py-4 text-lg font-bold outline-none dark:text-white placeholder-gray-400"
                         />
                     </div>
                     <button
                         type="submit"
-                        className="px-6 py-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white font-bold shadow-md transition-colors flex items-center gap-2 text-lg"
+                        className="bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-5 rounded-[2rem] font-black uppercase text-xs tracking-widest transition-all shadow-xl shadow-indigo-500/40 active:scale-95 flex items-center gap-2"
                     >
                         Search
                     </button>
                 </form>
 
-                <div className="flex justify-center gap-4 pt-2">
-                    <Link to="/products" className="inline-flex items-center px-6 py-3 rounded-xl shadow-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 transition-colors text-base font-medium">
-                        Explore Full Directory <ArrowRight className="ml-2 h-5 w-5 text-indigo-500" />
-                    </Link>
+                {/* Intelligence Ticker */}
+                <div className="flex flex-wrap justify-center gap-10 pt-8 opacity-60">
+                    <div className="flex flex-col items-center">
+                        <span className="text-2xl font-black text-gray-900 dark:text-white">94%</span>
+                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Accuracy</span>
+                    </div>
+                    <div className="flex flex-col items-center">
+                        <span className="text-2xl font-black text-gray-900 dark:text-white">₹1.2M+</span>
+                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">User Savings</span>
+                    </div>
+                    <div className="flex flex-col items-center">
+                        <span className="text-2xl font-black text-gray-900 dark:text-white">24/7</span>
+                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Monitoring</span>
+                    </div>
                 </div>
             </section>
 
             {/* Smart Feed Grids using abstract function */}
-            <div className="space-y-4">
-                {renderProductSection("Trending Products", <ShoppingBag className="w-5 h-5" />, trending)}
-                {renderProductSection("Biggest Price Drops", <Flame className="w-5 h-5 text-red-500 dark:text-red-400" />, priceDrops)}
-                {renderProductSection("Most Tracked Products", <Activity className="w-5 h-5" />, mostTracked)}
+            <div className="space-y-24">
+                {renderProductSection("🔥 Trending Now", <Flame className="w-5 h-5 text-orange-500" />, trending)}
+                {renderProductSection("📉 Price Drop Radar", <TrendingUp className="w-5 h-5 text-emerald-500" />, priceDrops)}
+                {renderProductSection("⭐ High Intelligence Picks", <Activity className="w-5 h-5 text-indigo-500" />, mostTracked)}
             </div>
 
-            {/* Features Section */}
-            <section className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-12 border-t border-gray-200 dark:border-gray-800">
-                <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 transition-colors duration-300 hover:shadow-md">
-                    <div className="w-12 h-12 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-xl flex items-center justify-center mb-6">
-                        <BarChart2 className="w-6 h-6" />
-                    </div>
-                    <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">Deep Analytics</h3>
-                    <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-                        Historical price tracking combined with volatility scoring up to 90 days in the past. Always know true market value.
-                    </p>
+            {/* Premium Features Grid */}
+            <section className="bg-white dark:bg-gray-900/50 p-12 rounded-[3.5rem] border border-gray-100 dark:border-gray-800 shadow-xl overflow-hidden relative">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 blur-3xl rounded-full"></div>
+                
+                <div className="mb-16">
+                    <h2 className="text-4xl font-black text-gray-900 dark:text-white tracking-tighter mb-4">Enterprise Grade Tools. <br /> <span className="text-indigo-600">Built for you.</span></h2>
+                    <p className="text-gray-500 font-medium">No more guesswork. Only data-backed decisions.</p>
                 </div>
 
-                <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 transition-colors duration-300 hover:shadow-md">
-                    <div className="w-12 h-12 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-xl flex items-center justify-center mb-6">
-                        <TrendingUp className="w-6 h-6" />
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div className="p-8 bg-gray-50 dark:bg-gray-800/50 rounded-[2.5rem] border border-gray-100 dark:border-gray-700/50 hover:bg-white dark:hover:bg-gray-800 transition-all group">
+                        <div className="w-14 h-14 bg-indigo-600 text-white rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-indigo-500/20 group-hover:scale-110 transition-transform">
+                            <BarChart2 className="w-7 h-7" />
+                        </div>
+                        <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Price Regression</h4>
+                        <p className="text-sm text-gray-500 leading-relaxed font-medium">We track price points every 6 hours and apply linear regression to find true market trends.</p>
                     </div>
-                    <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">Price Prediction</h3>
-                    <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-                        Advanced regression mathematics calculate dropping probabilities over 7 and 30-day forecast horizons.
-                    </p>
-                </div>
 
-                <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 transition-colors duration-300 hover:shadow-md">
-                    <div className="w-12 h-12 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-xl flex items-center justify-center mb-6">
-                        <ShieldCheck className="w-6 h-6" />
+                    <div className="p-8 bg-gray-50 dark:bg-gray-800/50 rounded-[2.5rem] border border-gray-100 dark:border-gray-700/50 hover:bg-white dark:hover:bg-gray-800 transition-all group">
+                        <div className="w-14 h-14 bg-indigo-600 text-white rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-indigo-500/20 group-hover:scale-110 transition-transform">
+                            <TrendingUp className="w-7 h-7" />
+                        </div>
+                        <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-2">30D Forecasts</h4>
+                        <p className="text-sm text-gray-500 leading-relaxed font-medium">Predicting where the price will be a month from now using historical volatility and volume data.</p>
                     </div>
-                    <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">Buy Intelligence</h3>
-                    <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-                        Unbiased AI recommendation engine tells you exactly when to buy now, or wait for an inevitable discount.
-                    </p>
+
+                    <div className="p-8 bg-gray-50 dark:bg-gray-800/50 rounded-[2.5rem] border border-gray-100 dark:border-gray-700/50 hover:bg-white dark:hover:bg-gray-800 transition-all group">
+                        <div className="w-14 h-14 bg-indigo-600 text-white rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-indigo-500/20 group-hover:scale-110 transition-transform">
+                            <ShieldCheck className="w-7 h-7" />
+                        </div>
+                        <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Deal Verification</h4>
+                        <p className="text-sm text-gray-500 leading-relaxed font-medium">Calculates "Real Discount" based on 90-day average. Don't be fooled by fake sale price markups.</p>
+                    </div>
+
+                    <div className="p-8 bg-gray-50 dark:bg-gray-800/50 rounded-[2.5rem] border border-gray-100 dark:border-gray-700/50 hover:bg-white dark:hover:bg-gray-800 transition-all group">
+                        <div className="w-14 h-14 bg-indigo-600 text-white rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-indigo-500/20 group-hover:scale-110 transition-transform">
+                            <Activity className="w-7 h-7" />
+                        </div>
+                        <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Watchlist Bot</h4>
+                        <p className="text-sm text-gray-500 leading-relaxed font-medium">Set a target price and walk away. Our automation engine works 24/7 and emails you on drop.</p>
+                    </div>
                 </div>
             </section>
-
         </div>
     );
 };
