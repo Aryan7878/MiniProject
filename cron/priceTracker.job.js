@@ -5,6 +5,8 @@ import Analytics from "../models/analytics.model.js";
 import { searchExternalProducts } from "../services/search.service.js";
 import * as analyticsService from "../services/analyticsService.js";
 import * as predictionService from "../services/predictionService.js";
+import Watchlist from "../models/watchlist.model.js";
+import { sendPriceAlert } from "../services/email.service.js";
 
 /**
  * Executes the full background price tracking cycle.
@@ -67,6 +69,32 @@ export const runPriceTracker = async () => {
                         { new: true, upsert: true }
                     );
                     console.log(`[Cron] Extracted node & computed analytics for ${product.name}`);
+                }
+
+                // 4. Check Watchlist for Price Drop Alerts
+                const watchlists = await Watchlist.find({ 
+                    product: product._id, 
+                    isActive: true, 
+                    notified: false 
+                }).populate('user');
+
+                for (const item of watchlists) {
+                    const currentBestPrice = Math.min(...product.marketplaces.map(m => m.price));
+                    
+                    if (currentBestPrice <= item.targetPrice) {
+                        await sendPriceAlert(item.user.email, {
+                            productName: product.name,
+                            targetPrice: item.targetPrice,
+                            currentPrice: currentBestPrice,
+                            productUrl: product.marketplaces[0]?.url || "",
+                            productImage: product.image
+                        });
+
+                        // Deactivate or mark as notified
+                        item.notified = true;
+                        item.isActive = false; // Only alert once by default
+                        await item.save();
+                    }
                 }
             } else {
                 console.log(`[Cron] No live options found for ${product.name}`);
