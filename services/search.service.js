@@ -66,13 +66,18 @@ export const searchExternalProducts = async (query) => {
         // If product doesn't exist in map yet, initialize base skeleton
         if (!productMap.has(normalizedName)) {
             const basePrice = typeof item.price === 'number' ? item.price : parseInt(String(item.price).replace(/,/g, ''), 10) || 0;
+            // Generate a stable pseudo-ID for external results so the UI doesn't break
+            const pseudoId = `ext-${Buffer.from(normalizedName).toString('hex').slice(0, 12)}`;
             productMap.set(normalizedName, {
+                _id: pseudoId,
+                id: pseudoId,
                 name: item.name.trim(),
                 brand: item.brand || "Unknown",
                 category: item.category || "Electronics",
                 image: item.image || "",
                 price: basePrice, // Provide base schema price mapping
-                marketplaces: []
+                marketplaces: [],
+                isExternal: true
             });
         }
 

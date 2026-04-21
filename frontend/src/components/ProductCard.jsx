@@ -3,109 +3,148 @@ import { Link } from 'react-router-dom';
 import { useCurrency } from '../context/CurrencyContext';
 import { formatCurrency } from '../utils/formatCurrency';
 import { useCompare } from '../context/CompareContext';
-import { Layers, CheckCircle2 } from 'lucide-react';
+import { Layers, CheckCircle2, TrendingDown, Flame, ExternalLink } from 'lucide-react';
+
+const MARKETPLACE_BADGE_STYLE = {
+    amazon:   { background: 'rgba(245,158,11,0.12)', color: '#fcd34d', border: '1px solid rgba(245,158,11,0.25)' },
+    flipkart: { background: 'rgba(59,130,246,0.12)',  color: '#93c5fd', border: '1px solid rgba(59,130,246,0.25)'  },
+    croma:    { background: 'rgba(20,184,166,0.12)',  color: '#5eead4', border: '1px solid rgba(20,184,166,0.25)'  },
+};
 
 const ProductCard = ({ product }) => {
     const { currency } = useCurrency();
     const { compareItems, addToCompare, removeFromCompare } = useCompare();
-
     const isComparing = compareItems.find(item => item._id === product._id);
 
-    // Calculate best price
-    const bestPrice = product.marketplaces?.length > 0 
+    const bestPrice = product.marketplaces?.length > 0
         ? Math.min(...product.marketplaces.map(m => m.price))
         : (product.price || 0);
 
+    const isGreatDeal = product.analytics?.realDiscount > 10;
+    const isDropping  = product.analytics?.trendScore < 0;
+
     const handleCompare = (e) => {
         e.preventDefault();
-        if (isComparing) {
-            removeFromCompare(product._id);
-        } else {
-            addToCompare(product);
-        }
+        isComparing ? removeFromCompare(product._id) : addToCompare(product);
     };
-    
+
     return (
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-indigo-500/60 dark:hover:border-indigo-400/60 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col overflow-hidden group">
-            <div className="relative w-full h-48 bg-gray-100 dark:bg-gray-700 overflow-hidden flex items-center justify-center p-4">
+        <div className="product-card">
+            {/* Image */}
+            <div style={{
+                position: 'relative', width: '100%', height: '160px',
+                background: 'linear-gradient(135deg, rgba(124,58,237,0.05), rgba(99,102,241,0.05))',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', overflow: 'hidden'
+            }}>
                 <img
-                    src={product.image || product.imageUrl || `https://via.placeholder.com/600x400.png?text=SmartCart`}
+                    src={product.image || product.imageUrl || 'https://placehold.co/600x400/12122a/a78bfa?text=SmartCart'}
                     alt={product.name}
-                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
-                    onError={(e) => { e.target.src = `https://via.placeholder.com/600x400.png?text=No+Image`; }}
+                    style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', transition: 'transform 0.4s ease' }}
+                    onError={(e) => { e.target.src = 'https://placehold.co/600x400/12122a/a78bfa?text=No+Preview'; }}
+                    className="card-img"
                 />
-                <div className="absolute top-3 left-3 flex flex-col items-start gap-2">
-                    {product.analytics?.realDiscount > 10 && (
-                        <span className="inline-flex items-center px-2.5 py-1 rounded bg-red-100/90 text-red-800 border border-red-200 shadow-sm text-xs font-bold backdrop-blur-sm dark:bg-red-500/20 dark:text-red-400 dark:border-red-500/30">
-                            🔥 Great Deal
+
+                {/* Badges */}
+                <div style={{ position: 'absolute', top: '0.625rem', left: '0.625rem', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                    {isGreatDeal && (
+                        <span className="badge badge-red">
+                            <Flame className="w-2.5 h-2.5" /> Great Deal
                         </span>
                     )}
-                    {product.analytics?.trendScore < 0 && (
-                        <span className="inline-flex items-center px-2.5 py-1 rounded bg-blue-100/90 text-blue-800 border border-blue-200 shadow-sm text-xs font-bold backdrop-blur-sm dark:bg-blue-500/20 dark:text-blue-400 dark:border-blue-500/30">
-                            📉 Price Dropping
+                    {isDropping && (
+                        <span className="badge badge-green">
+                            <TrendingDown className="w-2.5 h-2.5" /> Price Drop
                         </span>
                     )}
                 </div>
 
-                <button 
+                {/* Compare toggle */}
+                <button
                     onClick={handleCompare}
-                    className={`absolute top-3 right-3 p-2 rounded-full backdrop-blur-md shadow-sm border transition-all ${
-                        isComparing 
-                        ? 'bg-indigo-600 border-indigo-500 text-white' 
-                        : 'bg-white/90 dark:bg-gray-800/90 border-gray-100 dark:border-gray-600 text-gray-500 hover:text-indigo-600'
-                    }`}
-                    title={isComparing ? "Remove from compare" : "Add to compare"}
+                    title={isComparing ? 'Remove from compare' : 'Add to compare'}
+                    style={{
+                        position: 'absolute', top: '0.625rem', right: '0.625rem',
+                        width: '1.875rem', height: '1.875rem', borderRadius: '50%',
+                        border: isComparing ? '1px solid #7c3aed' : '1px solid rgba(139,92,246,0.25)',
+                        background: isComparing ? '#7c3aed' : 'rgba(12,12,26,0.8)',
+                        color: isComparing ? 'white' : 'var(--text-muted)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        cursor: 'pointer', transition: 'all 0.2s',
+                        backdropFilter: 'blur(8px)'
+                    }}
                 >
-                    {isComparing ? <CheckCircle2 className="w-4 h-4" /> : <Layers className="w-4 h-4" />}
+                    {isComparing ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Layers className="w-3.5 h-3.5" />}
                 </button>
             </div>
 
-            <div className="p-5 flex flex-col flex-1 gap-3">
+            {/* Body */}
+            <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', flex: 1, gap: '0.625rem' }}>
                 <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white leading-snug line-clamp-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                    <p style={{ fontSize: '0.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#a78bfa', marginBottom: '0.25rem' }}>
+                        {product.brand || 'Generic'}
+                    </p>
+                    <h3 style={{
+                        fontSize: '0.875rem', fontWeight: 600, lineHeight: 1.4,
+                        color: 'var(--text-primary)',
+                        display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden'
+                    }}>
                         {product.name}
                     </h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{product.brand || 'Generic'}</p>
                 </div>
 
-                <div className="mt-2 space-y-4 flex-1">
-                    <div className="flex items-center gap-2">
-                        <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-400">
-                            Best Price
-                        </span>
-                        <p className="text-xl font-bold text-gray-900 dark:text-white">
-                            {formatCurrency(bestPrice, currency)}
-                        </p>
+                {/* Price */}
+                <div style={{ marginTop: '0.25rem' }}>
+                    <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 600, marginBottom: '0.2rem' }}>Best Price</p>
+                    <p style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
+                        {formatCurrency(bestPrice, currency)}
+                    </p>
+                </div>
+
+                {/* Marketplace prices */}
+                {product.marketplaces?.length > 0 && (
+                    <div style={{
+                        borderTop: '1px solid var(--border-subtle)', paddingTop: '0.625rem',
+                        display: 'flex', flexDirection: 'column', gap: '0.375rem'
+                    }}>
+                        {product.marketplaces.slice(0, 2).map((m, i) => {
+                            const style = MARKETPLACE_BADGE_STYLE[m.name?.toLowerCase()] || {};
+                            return (
+                                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <span className="badge" style={{ ...style, textTransform: 'capitalize' }}>{m.name}</span>
+                                    <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                                        {formatCurrency(m.price, currency)}
+                                    </span>
+                                </div>
+                            );
+                        })}
                     </div>
+                )}
 
-                    {product.marketplaces?.length > 0 && (
-                         <div className="space-y-1.5 pt-3 border-t border-gray-100 dark:border-gray-700">
-                             {product.marketplaces.slice(0, 2).map((m, i) => (
-                                 <div key={i} className="flex justify-between items-center text-sm">
-                                     <span className="text-gray-600 dark:text-gray-400 capitalize">{m.name}</span>
-                                     <span className="font-semibold text-gray-900 dark:text-white">{formatCurrency(m.price, currency)}</span>
-                                 </div>
-                             ))}
-                         </div>
-                    )}
-                </div>
-
-                <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex gap-2">
+                {/* Actions */}
+                <div style={{ display: 'flex', gap: '0.5rem', marginTop: 'auto', paddingTop: '0.5rem' }}>
                     <Link
                         to={`/products/${product._id}`}
-                        className="flex-1 inline-flex items-center justify-center px-4 py-2.5 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-500/10 dark:hover:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 font-bold rounded-lg transition-colors border border-transparent hover:border-indigo-200 dark:hover:border-indigo-800/50 text-sm"
+                        style={{
+                            flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.375rem',
+                            padding: '0.5rem', borderRadius: '0.625rem', textDecoration: 'none',
+                            background: 'linear-gradient(135deg, rgba(124,58,237,0.2), rgba(99,102,241,0.15))',
+                            border: '1px solid rgba(139,92,246,0.25)',
+                            color: '#c4b5fd', fontSize: '0.75rem', fontWeight: 700, transition: 'all 0.2s'
+                        }}
                     >
-                        Intelligence
+                        Intelligence <ExternalLink className="w-3 h-3" />
                     </Link>
                     <button
                         onClick={handleCompare}
-                        className={`px-4 py-2.5 rounded-lg border font-bold text-sm transition-all ${
-                            isComparing
-                            ? 'bg-indigo-600 border-indigo-600 text-white'
-                            : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-indigo-500'
-                        }`}
+                        style={{
+                            padding: '0.5rem 0.875rem', borderRadius: '0.625rem', fontSize: '0.75rem',
+                            fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s',
+                            background: isComparing ? '#7c3aed' : 'rgba(12,12,26,0.8)',
+                            border: isComparing ? '1px solid #7c3aed' : '1px solid var(--border-subtle)',
+                            color: isComparing ? 'white' : 'var(--text-secondary)'
+                        }}
                     >
-                        {isComparing ? "In Compare" : "Compare"}
+                        {isComparing ? 'Added' : 'Compare'}
                     </button>
                 </div>
             </div>

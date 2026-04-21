@@ -10,7 +10,7 @@ import {
     getFlipkartCategories,
     getExternalProductDetails,
 } from "../controllers/product.controller.js";
-import { protect } from "../middleware/auth.middleware.js";
+import { protect, authorize } from "../middleware/auth.middleware.js";
 import { validate, createProductSchema, updateProductSchema } from "../middleware/validate.js";
 
 const router = Router();
@@ -47,15 +47,15 @@ router.get("/:id/analyze", analyzeProduct);
 /** GET /api/products/:id  - single product */
 router.get("/:id", getProductById);
 
-// ── Protected routes (require valid JWT) ─────────────────────────────────────
+// ── Protected routes (require valid JWT & Admin role) ────────────────────────
 
 /** POST /api/products  - create new product (admin) */
-router.post("/", protect, validate(createProductSchema), createProduct);
+router.post("/", protect, authorize("admin"), validate(createProductSchema), createProduct);
 
 /** PUT /api/products/:id  - update product (admin) */
-router.put("/:id", protect, validate(updateProductSchema), updateProduct);
+router.put("/:id", protect, authorize("admin"), validate(updateProductSchema), updateProduct);
 
 /** DELETE /api/products/:id  - hard delete (admin) */
-router.delete("/:id", protect, deleteProduct);
+router.delete("/:id", protect, authorize("admin"), deleteProduct);
 
 export default router;

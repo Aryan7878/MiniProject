@@ -4,9 +4,9 @@ import { useCurrency } from '../context/CurrencyContext';
 import { formatCurrency } from '../utils/formatCurrency';
 import { Link } from 'react-router-dom';
 import { 
-    X, ArrowLeft, ArrowRight, ExternalLink, 
-    ShoppingCart, Activity, Info, TrendingDown,
-    TrendingUp, Star, Package, Trash2
+    X, ArrowLeft, ExternalLink, 
+    ShoppingCart, Activity, TrendingDown,
+    TrendingUp, Package, Trash2, Cpu
 } from 'lucide-react';
 import { analyzeProduct } from '../services/api';
 import BuyBadge from '../components/BuyBadge';
@@ -43,48 +43,58 @@ const ComparisonPage = () => {
 
     if (compareItems.length === 0) {
         return (
-            <div className="flex flex-col items-center justify-center py-32 text-center animate-in fade-in duration-700">
-                <div className="w-24 h-24 rounded-full bg-gray-50 dark:bg-gray-800 flex items-center justify-center mb-6">
-                    <Package className="w-10 h-10 text-gray-300 dark:text-gray-600" />
+            <div style={{
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                minHeight: '70vh', textAlign: 'center', gap: '1.5rem'
+            }} className="animate-fade-up">
+                <div style={{
+                    width: '6rem', height: '6rem', borderRadius: '1.5rem',
+                    background: 'rgba(12,12,26,0.5)', border: '1px solid var(--border-subtle)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center'
+                }}>
+                    <Package style={{ width: '2.5rem', height: '2.5rem', color: 'var(--text-muted)' }} />
                 </div>
-                <h2 className="text-3xl font-black text-gray-900 dark:text-white mb-4">No products to compare</h2>
-                <p className="text-gray-500 dark:text-gray-400 max-w-sm mx-auto mb-8 font-medium">
-                    Add products to your comparison list from search or directory to see side-by-side intelligence.
-                </p>
-                <Link 
-                    to="/products" 
-                    className="px-8 py-4 bg-indigo-600 text-white rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-indigo-700 shadow-xl shadow-indigo-500/20 transition-all flex items-center gap-2"
-                >
-                    <ArrowLeft className="w-4 h-4" /> Browse Catalog
+                <div>
+                    <h2 style={{ fontSize: '1.75rem', fontWeight: 900, color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>No comparisons queued</h2>
+                    <p style={{ color: 'var(--text-muted)', marginTop: '0.5rem', fontSize: '0.9rem', maxWidth: '400px', margin: '0.5rem auto 0' }}>
+                        Add products from the catalog to see side-by-side technical intelligence and price trajectories.
+                    </p>
+                </div>
+                <Link to="/products" className="btn-primary" style={{ padding: '0.875rem 2rem', borderRadius: '1rem' }}>
+                    Browse Marketplace
                 </Link>
             </div>
         );
     }
 
     return (
-        <div className="space-y-12 animate-in fade-in duration-700 pb-20">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
             {/* Header */}
-            <div className="flex flex-col md:flex-row justify-between items-end gap-6 pt-8">
+            <div className="animate-fade-in" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
                 <div>
-                    <Link to="/products" className="inline-flex items-center text-sm font-black text-indigo-600 uppercase tracking-widest mb-4 hover:underline">
-                        <ArrowLeft className="w-4 h-4 mr-2" /> Back to Catalog
-                    </Link>
-                    <h1 className="text-4xl font-black text-gray-900 dark:text-white tracking-tighter">
-                        Product <span className="text-indigo-600 italic">Comparison.</span>
+                    <h1 style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--text-primary)', letterSpacing: '-0.03em' }}>
+                        Side-by-side <span className="gradient-text">Intelligence</span>
                     </h1>
-                    <p className="text-gray-500 font-medium mt-2">Comparing {compareItems.length} intelligence models side-by-side</p>
+                    <p style={{ color: 'var(--text-secondary)', marginTop: '0.25rem', fontSize: '0.875rem', fontWeight: 500 }}>
+                        Cross-referencing {compareItems.length} intelligence models.
+                    </p>
                 </div>
                 <button 
                     onClick={clearCompare}
-                    className="flex items-center gap-2 text-sm font-black text-rose-500 uppercase tracking-widest hover:text-rose-600 transition-colors"
+                    style={{
+                        display: 'flex', alignItems: 'center', gap: '0.5rem',
+                        padding: '0.6rem 1rem', borderRadius: '0.75rem',
+                        background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)',
+                        color: '#f87171', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer'
+                    }}
                 >
-                    <Trash2 className="w-4 h-4" /> Clear All
+                    <Trash2 style={{ width: '1rem', height: '1rem' }} /> Clear Stack
                 </button>
             </div>
 
             {/* Comparison Grid */}
-            <div className="overflow-x-auto pb-4 custom-scrollbar">
-                <div className="flex gap-6 min-w-max">
+            <div style={{ overflowX: 'auto', paddingBottom: '2rem' }} className="custom-scrollbar">
+                <div style={{ display: 'flex', gap: '1.5rem', minWidth: 'max-content' }}>
                     {compareItems.map((item) => {
                         const id = item._id || item.id;
                         const intel = intelligence[id];
@@ -93,109 +103,112 @@ const ComparisonPage = () => {
                             : (item.price || 0);
 
                         return (
-                            <div key={id} className="w-[340px] flex flex-col gap-6">
-                                {/* Base Card */}
-                                <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] border border-gray-100 dark:border-gray-700 shadow-xl overflow-hidden relative group">
+                            <div key={id} style={{ width: '320px', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                                {/* Product Card */}
+                                <div className="glass-card" style={{ padding: '0', overflow: 'hidden', position: 'relative' }}>
                                     <button 
                                         onClick={() => removeFromCompare(id)}
-                                        className="absolute top-4 right-4 z-10 p-2 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-full text-gray-400 hover:text-rose-500 transition-colors shadow-sm"
+                                        style={{
+                                            position: 'absolute', top: '1rem', right: '1rem', zIndex: 10,
+                                            background: 'rgba(12,12,26,0.8)', border: 'none',
+                                            borderRadius: '50%', padding: '0.375rem', cursor: 'pointer', color: 'var(--text-muted)'
+                                        }}
                                     >
-                                        <X className="w-4 h-4" />
+                                        <X style={{ width: '0.875rem', height: '0.875rem' }} />
                                     </button>
 
                                     {/* Image Section */}
-                                    <div className="h-56 p-8 bg-gray-50 dark:bg-gray-900/50 flex items-center justify-center relative overflow-hidden">
+                                    <div style={{ height: '200px', padding: '2rem', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                         <img 
-                                            src={item.image || `https://via.placeholder.com/300?text=Product`} 
+                                            src={item.image || item.imageUrl || `https://via.placeholder.com/300?text=P`} 
                                             alt={item.name}
-                                            className="h-full object-contain drop-shadow-2xl group-hover:scale-110 transition-transform duration-700"
+                                            style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }}
                                         />
-                                        <div className="absolute bottom-4 left-6">
+                                        <div style={{ position: 'absolute', bottom: '0.75rem', left: '1rem' }}>
                                             <BuyBadge rec={intel?.analytics?.buyRecommendation || 'monitor'} />
                                         </div>
                                     </div>
 
                                     {/* Info Section */}
-                                    <div className="p-8 space-y-6">
-                                        <div className="min-h-[64px]">
-                                            <p className="text-[10px] font-black text-indigo-500 uppercase tracking-widest mb-1">{item.brand || 'Premium'}</p>
-                                            <h3 className="text-lg font-bold text-gray-900 dark:text-white leading-snug line-clamp-2">
+                                    <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                        <div style={{ minHeight: '3.5rem' }}>
+                                            <p style={{ fontSize: '0.65rem', fontWeight: 800, textTransform: 'uppercase', color: '#a78bfa', marginBottom: '0.25rem' }}>{item.brand || 'Premium'}</p>
+                                            <h3 style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.4 }}>
                                                 {item.name}
                                             </h3>
                                         </div>
 
-                                        <div className="flex items-baseline gap-2 pt-4 border-t border-gray-50 dark:border-gray-700">
-                                            <span className="text-3xl font-black text-gray-900 dark:text-white">
+                                        <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', borderTop: '1px solid var(--border-subtle)', paddingTop: '1rem' }}>
+                                            <span style={{ fontSize: '1.5rem', fontWeight: 950, color: 'var(--text-primary)' }}>
                                                 {formatCurrency(bestPrice, currency)}
                                             </span>
-                                            <span className="text-[10px] text-gray-400 font-bold uppercase tracking-tight">Best Price Now</span>
+                                            <span style={{ fontSize: '0.6rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Now</span>
                                         </div>
 
                                         {/* Marketplace Grid */}
-                                        <div className="space-y-3">
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                             {item.marketplaces?.map((m, i) => (
-                                                <div key={i} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900/50 rounded-2xl border border-gray-100 dark:border-gray-700/50">
-                                                    <span className="text-xs font-bold text-gray-500 uppercase tracking-tight capitalize">{m.name}</span>
-                                                    <span className="text-sm font-black text-gray-900 dark:text-white">{formatCurrency(m.price, currency)}</span>
+                                                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem 0.75rem', background: 'rgba(12,12,26,0.4)', borderRadius: '0.75rem', border: '1px solid var(--border-subtle)' }}>
+                                                    <span style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'capitalize' }}>{m.name}</span>
+                                                    <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-primary)' }}>{formatCurrency(m.price, currency)}</span>
                                                 </div>
                                             ))}
                                         </div>
 
-                                        {/* Buy Redirect Buttons */}
-                                        <div className="pt-4 grid grid-cols-1 gap-2">
-                                            {item.marketplaces?.[0] && (
-                                                <a 
-                                                    href={item.marketplaces[0].url || item.marketplaces[0].link}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="w-full flex items-center justify-center gap-2 py-4 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-2xl font-black text-xs uppercase tracking-widest hover:opacity-90 shadow-xl transition-all active:scale-95"
-                                                >
-                                                    <ShoppingCart className="w-4 h-4" /> Checkout {item.marketplaces[0].name}
-                                                </a>
-                                            )}
-                                            <Link 
-                                                to={`/products/${id}`}
-                                                className="w-full flex items-center justify-center gap-2 py-4 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-indigo-100 transition-all"
-                                            >
-                                                View Full Engine
-                                            </Link>
-                                        </div>
+                                        {/* Buy Button */}
+                                        <a 
+                                            href={(item.marketplaces?.[0]?.url || item.marketplaces?.[0]?.link) || '#'}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="btn-primary"
+                                            style={{ width: '100%', justifyContent: 'center', padding: '0.75rem', borderRadius: '0.75rem', fontSize: '0.8rem', textDecoration: 'none' }}
+                                        >
+                                            <ShoppingCart style={{ width: '1rem', height: '1rem' }} /> Storefront
+                                        </a>
+                                        <Link 
+                                            to={`/products/${id}`}
+                                            style={{ textAlign: 'center', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textDecoration: 'none' }}
+                                            onMouseOver={e => e.currentTarget.style.color = 'var(--text-primary)'}
+                                            onMouseOut={e => e.currentTarget.style.color = 'var(--text-muted)'}
+                                        >
+                                            View Full Analysis
+                                        </Link>
                                     </div>
                                 </div>
 
-                                {/* Intelligence Breakdown */}
-                                <div className="space-y-4">
-                                    <div className="bg-indigo-600 text-white p-6 rounded-[2rem] shadow-xl shadow-indigo-500/20">
-                                        <div className="flex items-center justify-between mb-2">
-                                            <h4 className="text-[10px] font-black uppercase tracking-[0.2em] opacity-80">Buy Intelligence</h4>
-                                            <Activity className="w-4 h-4 opacity-80" />
+                                {/* Intelligence */}
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                    <div style={{ 
+                                        background: 'linear-gradient(135deg, rgba(124,58,237,0.15), rgba(99,102,241,0.1))',
+                                        border: '1px solid rgba(139,92,246,0.2)',
+                                        padding: '1.25rem', borderRadius: '1.25rem'
+                                    }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between', marginBottom: '0.75rem' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                               <Cpu style={{ width: '0.875rem', height: '0.875rem', color: '#a78bfa' }} />
+                                               <span style={{ fontSize: '0.65rem', fontWeight: 900, textTransform: 'uppercase', color: '#c4b5fd' }}>Recommendation</span>
+                                            </div>
                                         </div>
-                                        <p className="text-xs font-bold leading-relaxed">
-                                            {intel?.prediction?.bestBuy?.rationale || (loading ? "Crunching models..." : "Awaiting more data stream units.")}
+                                        <p style={{ fontSize: '0.8rem', fontWeight: 500, lineHeight: 1.5, color: '#e2e8f0' }}>
+                                            {intel?.prediction?.bestBuy?.rationale || (loading ? "Crunching..." : "Data stream inactive.")}
                                         </p>
                                     </div>
 
-                                    <div className="bg-white dark:bg-gray-800 p-6 rounded-[2rem] border border-gray-100 dark:border-gray-700 shadow-sm space-y-4">
-                                        <div className="flex justify-between items-center pb-3 border-b border-gray-50 dark:border-gray-700">
-                                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Volatility</span>
-                                            <span className="text-sm font-black text-gray-900 dark:text-white">{intel?.analytics?.volatilityIndex?.toFixed(1) || '0.0'}</span>
+                                    <div className="glass-card" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.5rem' }}>
+                                            <span style={{ fontSize: '0.65rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-muted)' }}>Volatility</span>
+                                            <span style={{ fontSize: '0.8rem', fontWeight: 900 }}>{intel?.analytics?.volatilityIndex?.toFixed(1) || '0.0'}</span>
                                         </div>
-                                        <div className="flex justify-between items-center pb-3 border-b border-gray-50 dark:border-gray-700">
-                                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Trend Vector</span>
-                                            <div className="flex items-center gap-1">
-                                                {intel?.analytics?.trendScore < 0 ? (
-                                                    <TrendingDown className="w-3 h-3 text-emerald-500" />
-                                                ) : (
-                                                    <TrendingUp className="w-3 h-3 text-rose-500" />
-                                                )}
-                                                <span className={`text-sm font-black ${intel?.analytics?.trendScore < 0 ? 'text-emerald-500' : 'text-rose-500'}`}>
-                                                    {intel?.analytics?.trendScore?.toFixed(1) || '0.0'}
-                                                </span>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.5rem' }}>
+                                            <span style={{ fontSize: '0.65rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-muted)' }}>Trend Slope</span>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                                                {intel?.analytics?.trendScore < 0 ? <TrendingDown style={{ width: '0.75rem', height: '0.75rem', color: '#10b981' }} /> : <TrendingUp style={{ width: '0.75rem', height: '0.75rem', color: '#f87171' }} />}
+                                                <span style={{ fontSize: '0.8rem', fontWeight: 900, color: intel?.analytics?.trendScore < 0 ? '#10b981' : '#f87171' }}>{intel?.analytics?.trendScore?.toFixed(1) || '0.0'}</span>
                                             </div>
                                         </div>
-                                        <div className="flex justify-between items-center">
-                                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Efficiency</span>
-                                            <span className="text-sm font-black text-indigo-600">{intel?.analytics?.realDiscount?.toFixed(1) || '0.0'}%</span>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                            <span style={{ fontSize: '0.65rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-muted)' }}>Real Savings</span>
+                                            <span style={{ fontSize: '0.8rem', fontWeight: 900, color: '#7c3aed' }}>{intel?.analytics?.realDiscount?.toFixed(1) || '0.0'}%</span>
                                         </div>
                                     </div>
                                 </div>

@@ -53,7 +53,16 @@ export const searchRapidAPIProducts = async (query) => {
             ]
         }));
     } catch (error) {
-        console.error("RapidAPI Product Search Error:", error.response?.data || error.message);
+        const errorData = error.response?.data;
+        const message = errorData?.message || error.message;
+
+        if (message.includes('not subscribed')) {
+            console.warn(`RapidAPI Warning: You are not subscribed to the API at ${RAPIDAPI_HOST}. Search results may be limited.`);
+        } else if (message.includes('Too many requests')) {
+            console.warn(`RapidAPI Warning: Rate limit exceeded for ${RAPIDAPI_HOST}.`);
+        } else {
+            console.error("RapidAPI Product Search Error:", message);
+        }
         return [];
     }
 };
@@ -81,7 +90,16 @@ export const fetchProductReviews = async (asin, country = 'IN') => {
         const response = await axios.request(options);
         return response.data.data?.reviews || [];
     } catch (error) {
-        console.error("RapidAPI Reviews Error:", error.response?.data || error.message);
+        const errorData = error.response?.data;
+        const message = errorData?.message || error.message;
+
+        if (message.includes('not subscribed')) {
+            console.warn("RapidAPI Warning: You are not subscribed to the 'Real-Time Amazon Data' API on RapidAPI. Falling back to mock data.");
+        } else if (message.includes('Too many requests')) {
+            console.warn("RapidAPI Warning: Rate limit exceeded for Amazon Data API. Falling back to mock data.");
+        } else {
+            console.error("RapidAPI Reviews Error:", message);
+        }
         return [];
     }
 };
@@ -109,7 +127,16 @@ export const getFlipkartSubCategories = async (categoryId) => {
         const response = await axios.request(options);
         return response.data.data || [];
     } catch (error) {
-        console.error("Flipkart Sub-Categories Error:", error.response?.data || error.message);
+        const errorData = error.response?.data;
+        const message = errorData?.message || error.message;
+
+        if (message.includes('not subscribed')) {
+            console.warn(`RapidAPI Warning: You are not subscribed to the Flipkart API at ${FLIPKART_RAPIDAPI_HOST}.`);
+        } else if (message.includes('Too many requests')) {
+            console.warn(`RapidAPI Warning: Rate limit exceeded for Flipkart API.`);
+        } else {
+            console.error("Flipkart Sub-Categories Error:", message);
+        }
         return [];
     }
 };
@@ -154,7 +181,16 @@ export const getUnifiedProductDetails = async (productUrl) => {
             specifications: data.specifications || data.features || []
         };
     } catch (error) {
-        console.error("Unified Product Details Error:", error.response?.data || error.message);
+        const errorData = error.response?.data;
+        const message = errorData?.message || error.message;
+
+        if (message.includes('not subscribed')) {
+            console.warn(`RapidAPI Warning: You are not subscribed to the Unified Product API at ${UNIFIED_PRODUCT_RAPIDAPI_HOST}.`);
+        } else if (message.includes('Too many requests')) {
+            console.warn(`RapidAPI Warning: Rate limit exceeded for Unified Product API.`);
+        } else {
+            console.error("Unified Product Details Error:", message);
+        }
         return null;
     }
 };

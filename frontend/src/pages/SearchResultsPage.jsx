@@ -1,163 +1,41 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
-import { 
-    Search, AlertCircle, Star, ExternalLink, 
-    ShoppingBag, TrendingUp, ArrowRight, Loader2,
-    SlidersHorizontal, LayoutGrid, X, Layers, CheckCircle2
-} from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
+import { Search, Loader2, SlidersHorizontal, ShoppingBag, LayoutGrid } from 'lucide-react';
 import { searchProducts } from '../services/api';
-import { useCurrency } from '../context/CurrencyContext';
-import { useCompare } from '../context/CompareContext';
-import { formatCurrency } from '../utils/formatCurrency';
+import ProductCard from '../components/ProductCard';
 
-// ── Marketplace configurations ───────────────────────────────────────────────
 const MARKETPLACES = ['amazon', 'flipkart', 'croma'];
 
-const MARKETPLACE_STYLES = {
-    amazon:   'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300 border-orange-200 dark:border-orange-800/50',
-    flipkart: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 border-blue-200 dark:border-blue-800/50',
-    croma:    'bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-300 border-teal-200 dark:border-teal-800/50',
-};
-
-const MarketplaceBadge = ({ name }) => {
-    const style = MARKETPLACE_STYLES[name?.toLowerCase()] 
-        ?? 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-600';
-    return (
-        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-tight border ${style}`}>
-            {name}
-        </span>
-    );
-};
-
-// ── Skeleton components ───────────────────────────────────────────────────────
 const SkeletonCard = () => (
-    <div className="bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 p-5 animate-pulse flex flex-col gap-4 shadow-sm">
-        <div className="w-full h-44 bg-gray-50 dark:bg-gray-700 rounded-2xl" />
-        <div className="space-y-2">
-            <div className="h-4 bg-gray-100 dark:bg-gray-700 rounded w-3/4" />
-            <div className="h-3 bg-gray-100 dark:bg-gray-700 rounded w-1/2" />
-        </div>
-        <div className="h-10 bg-gray-100 dark:bg-gray-700 rounded-xl mt-auto" />
+    <div style={{
+        background: 'rgba(18,18,42,0.9)', border: '1px solid var(--border-subtle)',
+        borderRadius: '1.25rem', padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.75rem'
+    }}>
+        <div className="skeleton" style={{ height: '140px', borderRadius: '0.75rem' }} />
+        <div className="skeleton" style={{ height: '12px', width: '60%' }} />
+        <div className="skeleton" style={{ height: '12px', width: '40%' }} />
+        <div className="skeleton" style={{ height: '32px', borderRadius: '0.5rem' }} />
     </div>
 );
 
-// ── Product result card ───────────────────────────────────────────────────────
-const SearchResultCard = ({ result, currency }) => {
-    const { id, name, marketplaces, image, brand } = result;
-    const { compareItems, addToCompare, removeFromCompare } = useCompare();
-
-    const isComparing = compareItems.find(item => item.id === id || item._id === id);
-
-    // Calculate lowest price
-    const lowestPrice = marketplaces && marketplaces.length > 0
-        ? Math.min(...marketplaces.map(m => m.price))
-        : 0;
-
-    const handleCompare = (e) => {
-        e.preventDefault();
-        if (isComparing) {
-            removeFromCompare(id);
-        } else {
-            addToCompare(result);
-        }
-    };
-
-    return (
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-indigo-500/60 dark:hover:border-indigo-400/60 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col overflow-hidden group">
-
-            {/* Image */}
-            <div className="relative w-full h-44 bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden p-4">
-                <img
-                    src={image || `https://via.placeholder.com/200x200.png?text=Product`}
-                    alt={name}
-                    className="object-contain h-full w-full group-hover:scale-105 transition-transform duration-300"
-                    onError={(e) => { e.target.src = `https://via.placeholder.com/200x200.png?text=No+Image`; }}
-                />
-                <div className="absolute top-3 left-3 flex flex-col gap-1 items-start">
-                    {marketplaces?.map((m, i) => (
-                        <MarketplaceBadge key={i} name={m.name} />
-                    ))}
-                </div>
-
-                <button
-                    onClick={handleCompare}
-                    className={`absolute top-3 right-3 p-2 rounded-full backdrop-blur-md shadow-sm border transition-all ${
-                        isComparing
-                        ? 'bg-indigo-600 border-indigo-500 text-white'
-                        : 'bg-white/90 dark:bg-gray-800/90 border-gray-100 dark:border-gray-600 text-gray-500 hover:text-indigo-600'
-                    }`}
-                >
-                    {isComparing ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Layers className="w-3.5 h-3.5" />}
-                </button>
-            </div>
-
-            {/* Body */}
-            <div className="p-5 flex flex-col flex-1 gap-3">
-                <div>
-                     <p className="text-[10px] font-black text-indigo-500 uppercase tracking-widest mb-1">{brand || 'Market listing'}</p>
-                     <h3 className="text-sm font-semibold text-gray-900 dark:text-white leading-snug line-clamp-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                        {name}
-                    </h3>
-                </div>
-
-                <div className="mt-auto pt-2 flex flex-col gap-3">
-                    <div>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mb-0.5">Lowest Price</p>
-                        <p className="text-xl font-bold text-gray-900 dark:text-white">
-                            {lowestPrice ? formatCurrency(lowestPrice, currency) : 'N/A'}
-                        </p>
-                    </div>
-                    {id && (
-                        <div className="flex gap-2">
-                             <Link
-                                to={`/products/${id}`}
-                                className="flex-1 inline-flex justify-center items-center py-2.5 px-4 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-100 dark:bg-indigo-500/10 dark:text-indigo-400 dark:hover:bg-indigo-500/20 font-bold transition-colors text-xs"
-                            >
-                                Intelligence
-                            </Link>
-                            <button
-                                onClick={handleCompare}
-                                className={`px-4 py-2.5 rounded-lg border font-bold text-xs transition-all ${
-                                    isComparing
-                                    ? 'bg-indigo-600 border-indigo-600 text-white'
-                                    : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-indigo-500'
-                                }`}
-                            >
-                                {isComparing ? "In Compare" : "Compare"}
-                            </button>
-                        </div>
-                    )}
-                </div>
-            </div>
-        </div>
-    );
-};
-
-// ── Main Page ───────────────────────────────────────────────────────────────
 const SearchResultsPage = () => {
-    const [searchParams, setSearchParams] = useSearchParams();
-    const { currency } = useCurrency();
-    const queryFromUrl = searchParams.get('q') || '';
-    
-    const [inputValue, setInputValue] = useState(queryFromUrl);
-    const [results, setResults] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-    
-    // Filters & Sorting
-    const [priceRange, setPriceRange] = useState({ min: 0, max: 250000 });
-    const [selectedMarketplaces, setSelectedMarketplaces] = useState(['amazon', 'flipkart', 'croma']);
-    const [sortBy, setSortBy] = useState('price_asc');
+    const [searchParams, setSearchParams]           = useSearchParams();
+    const queryFromUrl                               = searchParams.get('q') || '';
+    const [inputValue, setInputValue]               = useState(queryFromUrl);
+    const [results, setResults]                       = useState([]);
+    const [loading, setLoading]                       = useState(false);
+    const [error, setError]                           = useState(null);
+    const [priceRange, setPriceRange]               = useState({ min: 0, max: 250000 });
+    const [selectedMarketplaces, setSelectedMarks]  = useState(['amazon', 'flipkart', 'croma']);
+    const [sortBy, setSortBy]                       = useState('price_asc');
 
     const runSearch = useCallback(async (q) => {
         if (!q.trim()) return;
-        setLoading(true);
-        setError(null);
+        setLoading(true); setError(null);
         try {
             const res = await searchProducts(q.trim());
             const data = res.data || [];
             setResults(data);
-            
             if (data.length > 0) {
                 const max = Math.max(...data.flatMap(r => r.marketplaces?.map(m => m.price) || [0]));
                 setPriceRange(prev => ({ ...prev, max: Math.ceil(max / 1000) * 1000 }));
@@ -170,129 +48,162 @@ const SearchResultsPage = () => {
     }, []);
 
     useEffect(() => {
-        if (queryFromUrl) {
-            setInputValue(queryFromUrl);
-            runSearch(queryFromUrl);
-        }
+        if (queryFromUrl) { setInputValue(queryFromUrl); runSearch(queryFromUrl); }
     }, [queryFromUrl, runSearch]);
 
-    const processedResults = results
+    const processed = results
         .filter(r => {
-            const lowest = r.marketplaces?.length > 0 ? Math.min(...r.marketplaces.map(m => m.price)) : 0;
-            const hasMarketplace = r.marketplaces?.some(m => selectedMarketplaces.includes(m.name.toLowerCase()));
-            return lowest >= priceRange.min && lowest <= priceRange.max && hasMarketplace;
+            const lowest = r.marketplaces?.length > 0 ? Math.min(...r.marketplaces.map(m => m.price)) : (r.price || 0);
+            const hasMk  = r.marketplaces?.some(m => selectedMarketplaces.includes(m.name.toLowerCase())) || selectedMarketplaces.length === MARKETPLACES.length;
+            return lowest >= priceRange.min && lowest <= priceRange.max && hasMk;
         })
         .sort((a, b) => {
-            const priceA = Math.min(...(a.marketplaces?.map(m => m.price) || [0]));
-            const priceB = Math.min(...(b.marketplaces?.map(m => m.price) || [0]));
-            return sortBy === 'price_asc' ? priceA - priceB : priceB - priceA;
+            const pA = Math.min(...(a.marketplaces?.map(m => m.price) || [a.price || 0]));
+            const pB = Math.min(...(b.marketplaces?.map(m => m.price) || [b.price || 0]));
+            return sortBy === 'price_asc' ? pA - pB : pB - pA;
         });
 
     return (
-        <div className="max-w-7xl mx-auto px-4 lg:px-8 space-y-12 animate-in fade-in duration-700">
-            {/* Search Header */}
-            <div className="flex flex-col items-center gap-8 pt-8">
-                <div className="text-center space-y-2">
-                    <h1 className="text-5xl font-black text-gray-900 dark:text-white tracking-tighter">
-                        Find the <span className="text-indigo-600">Best Deal</span>
-                    </h1>
-                    <p className="text-gray-500 font-medium italic">Compare {results.length || '0'} results from across the web</p>
-                </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
 
-                <form onSubmit={(e) => { e.preventDefault(); setSearchParams({ q: inputValue }); }} className="w-full max-w-3xl flex gap-3 p-2.5 bg-white dark:bg-gray-800 rounded-[2rem] shadow-2xl border border-gray-100 dark:border-gray-700 focus-within:ring-4 focus-within:ring-indigo-500/10 transition-all">
-                    <div className="relative flex-1 flex items-center pl-6">
-                        <Search className="h-6 w-6 text-indigo-500" />
-                        <input
-                            type="text"
-                            value={inputValue}
-                            onChange={(e) => setInputValue(e.target.value)}
-                            placeholder="Search universal marketplace..."
-                            className="w-full bg-transparent p-4 text-lg font-bold outline-none dark:text-white"
-                        />
-                    </div>
-                    <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-5 rounded-[1.5rem] font-black uppercase text-xs tracking-widest transition-all shadow-xl shadow-indigo-500/20 active:scale-95">
-                        {loading ? <Loader2 className="animate-spin" /> : "Refresh Feed"}
-                    </button>
-                </form>
+            {/* Header */}
+            <div className="animate-fade-in">
+                <h1 style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--text-primary)', letterSpacing: '-0.03em' }}>
+                    Universal <span className="gradient-text">Search</span>
+                </h1>
+                <p style={{ color: 'var(--text-secondary)', marginTop: '0.375rem', fontSize: '0.875rem', fontWeight: 500 }}>
+                    {queryFromUrl ? `Aggregation of ${results.length} market results for "${queryFromUrl}"` : 'Scouring the dark web for deals…'}
+                </p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-12 items-start">
-                {/* 🏷️ Sidebar */}
+            {/* Search Input Area */}
+            <form
+                onSubmit={(e) => { e.preventDefault(); setSearchParams({ q: inputValue }); }}
+                style={{
+                    display: 'flex', gap: '0.75rem', background: 'rgba(22,22,48,0.7)',
+                    border: '1px solid var(--border-subtle)', borderRadius: '1.25rem',
+                    padding: '0.625rem 0.625rem 0.625rem 1.25rem', maxWidth: '600px'
+                }}
+                className="animate-fade-up"
+            >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flex: 1 }}>
+                    <Search style={{ width: '1.1rem', height: '1.1rem', color: '#a78bfa', flexShrink: 0 }} />
+                    <input
+                        type="text" value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        placeholder="Search for models, brands, or categories..."
+                        style={{
+                            background: 'transparent', border: 'none', outline: 'none', flex: 1,
+                            color: 'var(--text-primary)', fontSize: '0.9rem', fontWeight: 500
+                        }}
+                    />
+                </div>
+                <button type="submit" className="btn-primary" style={{ padding: '0.65rem 1.5rem', borderRadius: '0.875rem', fontSize: '0.85rem' }}>
+                    {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Search'}
+                </button>
+            </form>
+
+            <div style={{ display: 'grid', gridTemplateColumns: queryFromUrl ? '240px 1fr' : '1fr', gap: '2rem', alignItems: 'start' }}>
+
+                {/* Filters Sidebar */}
                 {queryFromUrl && (
-                    <aside className="space-y-8 bg-gray-50/50 dark:bg-gray-800/30 p-8 rounded-[2rem] border border-gray-100 dark:border-gray-700/50">
-                        <div className="flex items-center gap-3 pb-4 border-b border-gray-200 dark:border-gray-700">
-                            <SlidersHorizontal className="w-5 h-5 text-indigo-600" />
-                            <h2 className="text-sm font-black uppercase tracking-widest text-gray-900 dark:text-white">Smart Filters</h2>
+                    <aside className="glass-card animate-fade-up" style={{ padding: '1.75rem', display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', marginBottom: '0.25rem' }}>
+                            <SlidersHorizontal style={{ width: '0.875rem', height: '0.875rem', color: '#a78bfa' }} />
+                            <span style={{ fontSize: '0.65rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)' }}>Synapse Filters</span>
                         </div>
 
-                        {/* Sorting */}
-                        <div className="space-y-3">
-                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Order By</label>
-                            <select 
-                                value={sortBy} 
-                                onChange={(e) => setSortBy(e.target.value)}
-                                className="w-full bg-white dark:bg-gray-900 p-4 rounded-2xl border border-gray-200 dark:border-gray-700 font-bold text-sm outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm"
+                        {/* Sort */}
+                        <div>
+                            <label style={{ fontSize: '0.6rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-muted)', display: 'block', marginBottom: '0.625rem' }}>Sort order</label>
+                            <select
+                                value={sortBy} onChange={(e) => setSortBy(e.target.value)}
+                                style={{
+                                    width: '100%', padding: '0.75rem',
+                                    background: 'rgba(12,12,26,0.8)', border: '1px solid var(--border-subtle)',
+                                    borderRadius: '0.75rem', color: 'var(--text-primary)', fontSize: '0.8rem',
+                                    fontWeight: 700, outline: 'none', cursor: 'pointer'
+                                }}
                             >
-                                <option value="price_asc">Cheapest First</option>
-                                <option value="price_desc">Most Expensive</option>
+                                <option value="price_asc">Price: Ascending</option>
+                                <option value="price_desc">Price: Descending</option>
                             </select>
                         </div>
 
-                        {/* Marketplace */}
-                        <div className="space-y-4">
-                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Platforms</label>
-                            <div className="flex flex-col gap-3">
-                                {MARKETPLACES.map(m => (
-                                    <button
-                                        key={m}
-                                        onClick={() => setSelectedMarketplaces(prev => prev.includes(m) ? prev.filter(x => x !== m) : [...prev, m])}
-                                        className={`flex items-center gap-3 p-4 rounded-2xl border transition-all font-bold text-sm ${selectedMarketplaces.includes(m) ? 'bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-500/20' : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-500'}`}
-                                    >
-                                        <div className={`w-2 h-2 rounded-full ${selectedMarketplaces.includes(m) ? 'bg-white' : 'bg-gray-300'}`} />
-                                        <span className="capitalize">{m}</span>
-                                    </button>
-                                ))}
+                        {/* Platforms */}
+                   <div>
+                            <label style={{ fontSize: '0.6rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-muted)', display: 'block', marginBottom: '0.625rem' }}>Platforms</label>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                {MARKETPLACES.map(m => {
+                                    const active = selectedMarketplaces.includes(m);
+                                    return (
+                                        <button key={m}
+                                            onClick={() => setSelectedMarks(prev => active ? prev.filter(x => x !== m) : [...prev, m])}
+                                            style={{
+                                                display: 'flex', alignItems: 'center', gap: '0.75rem',
+                                                padding: '0.6rem 0.875rem', borderRadius: '0.75rem',
+                                                border: active ? '1px solid rgba(139,92,246,0.4)' : '1px solid var(--border-subtle)',
+                                                background: active ? 'rgba(124,58,237,0.15)' : 'rgba(12,12,26,0.6)',
+                                                color: active ? '#c4b5fd' : 'var(--text-muted)',
+                                                fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer',
+                                                transition: 'all 0.2s', textTransform: 'capitalize'
+                                            }}
+                                        >
+                                            <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: active ? '#a78bfa' : 'var(--text-muted)' }} />
+                                            {m}
+                                        </button>
+                                    );
+                                })}
                             </div>
                         </div>
 
                         {/* Price Range */}
-                        <div className="space-y-4 pt-4">
-                            <div className="flex justify-between items-baseline">
-                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Pricing Limit</label>
-                                <span className="text-xs font-black text-indigo-600 tracking-tighter">Budget: ₹{priceRange.max.toLocaleString()}</span>
+                        <div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
+                                <label style={{ fontSize: '0.6rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-muted)' }}>Budget Cap</label>
+                                <span style={{ fontSize: '0.75rem', fontWeight: 900, color: '#a78bfa' }}>₹{priceRange.max.toLocaleString()}</span>
                             </div>
-                            <input 
+                            <input
                                 type="range" min="0" max="250000" step="5000"
                                 value={priceRange.max}
                                 onChange={(e) => setPriceRange({ ...priceRange, max: Number(e.target.value) })}
-                                className="w-full h-2 bg-gray-200 rounded-full appearance-none cursor-pointer accent-indigo-600"
+                                style={{ width: '100%', accentColor: '#7c3aed', cursor: 'pointer' }}
                             />
                         </div>
                     </aside>
                 )}
 
-                {/* 📦 Results Grid */}
-                <div className="lg:col-span-3 space-y-8">
+                {/* Results Grid */}
+                <div style={{ flex: 1 }}>
                     {loading ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))', gap: '1.25rem' }}>
                             {[...Array(6)].map((_, i) => <SkeletonCard key={i} />)}
                         </div>
-                    ) : processedResults.length > 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 animate-in zoom-in-95 duration-500">
-                            {processedResults.map((result, i) => (
-                                <SearchResultCard key={i} result={result} currency={currency} />
+                    ) : processed.length > 0 ? (
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))', gap: '1.25rem' }} className="animate-fade-in">
+                            {processed.map((product) => (
+                                <ProductCard key={product._id || product.id} product={product} />
                             ))}
                         </div>
                     ) : queryFromUrl ? (
-                        <div className="text-center py-32 bg-gray-50 dark:bg-gray-800/10 rounded-[3rem] border-2 border-dashed border-gray-100 dark:border-gray-800">
-                            <ShoppingBag className="w-16 h-16 text-gray-300 mx-auto mb-6" />
-                            <h3 className="text-2xl font-black text-gray-900 dark:text-white">No products match your filters</h3>
-                            <button onClick={() => { setPriceRange({ min: 0, max: 250000 }); setSelectedMarketplaces(MARKETPLACES); }} className="mt-4 text-indigo-600 font-bold underline underline-offset-4">Reset all filters</button>
+                         <div style={{
+                            textAlign: 'center', padding: '6rem 2rem',
+                            background: 'rgba(18,18,42,0.5)', borderRadius: '1.5rem',
+                            border: '2px dashed var(--border-subtle)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem'
+                        }}>
+                            <ShoppingBag style={{ width: '3rem', height: '3rem', color: 'var(--text-muted)' }} />
+                            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)' }}>No matches found</h3>
+                            <button
+                                onClick={() => { setPriceRange({ min: 0, max: 250000 }); setSelectedMarks(MARKETPLACES); }}
+                                style={{ color: '#a78bfa', background: 'none', border: 'none', fontWeight: 700, cursor: 'pointer', fontSize: '0.9rem' }}
+                            >
+                                Reset intelligence filters
+                            </button>
                         </div>
                     ) : (
-                        <div className="text-center py-40">
-                             <LayoutGrid className="w-20 h-20 text-gray-200 dark:text-gray-700 mx-auto mb-6 opacity-50" />
-                             <h2 className="text-3xl font-black text-gray-300 dark:text-gray-600 tracking-tight">Your Search Results Here</h2>
+                        <div style={{ textAlign: 'center', padding: '10rem 2rem' }}>
+                            <LayoutGrid style={{ width: '4rem', height: '4rem', color: 'var(--border-subtle)', margin: '0 auto 1.5rem' }} />
+                            <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--text-muted)' }}>Ready for input...</h2>
                         </div>
                     )}
                 </div>

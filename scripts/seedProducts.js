@@ -14,7 +14,7 @@ const seedProducts = [
     brand: "Apple",
     category: "Phones",
     price: 159900,
-    image: "https://images.unsplash.com/photo-1696446701796-da61225697cc?w=600&q=80",
+    image: "https://www.apple.com/v/iphone-15-pro/c/images/overview/copy/iphone_15__fntscstj6v6q_large.jpg",
     marketplaces: [
       { name: "Amazon", price: 156900, url: "https://www.amazon.in/dp/B0CHX1W1XY" },
       { name: "Flipkart", price: 159900, url: "https://www.flipkart.com/apple-iphone-15-pro-max-black-titanium-256-gb/p/itmd8737d9237644" },
@@ -26,7 +26,7 @@ const seedProducts = [
     brand: "Samsung",
     category: "Phones",
     price: 129999,
-    image: "https://images.unsplash.com/photo-1707011985338-0248f76d4dbd?w=600&q=80",
+    image: "https://images.samsung.com/is/image/samsung/p6pim/in/2401/gallery/in-galaxy-s24-s928-sm-s928bztqins-539573351?$650_519_PNG$",
     marketplaces: [
       { name: "Amazon", price: 129999, url: "https://www.amazon.in/dp/B0CS5X68D6" },
       { name: "Samsung Store", price: 129999, url: "https://www.samsung.com/in/smartphones/galaxy-s24-ultra/" }
@@ -37,7 +37,7 @@ const seedProducts = [
     brand: "Google",
     category: "Phones",
     price: 106999,
-    image: "https://images.unsplash.com/photo-1697368037341-3b52a70404c0?w=600&q=80",
+    image: "https://lh3.googleusercontent.com/fA714u2kM0pD3M5p2FvYyVl_F8W6v_S4R_pW8-uE_QvG_G8y6-N_n-mR-K-P=w1000",
     marketplaces: [
       { name: "Flipkart", price: 104999, url: "https://flipkart.com/" },
       { name: "Amazon", price: 106999, url: "https://amazon.in/" }
@@ -48,7 +48,7 @@ const seedProducts = [
     brand: "OnePlus",
     category: "Phones",
     price: 64999,
-    image: "https://images.unsplash.com/photo-1706857868033-b295bd6b3dd7?w=600&q=80",
+    image: "https://m.media-amazon.com/images/I/71YFq774QSL._SL1500_.jpg",
     marketplaces: [
       { name: "Amazon", price: 63999, url: "https://amazon.in/" }
     ]
@@ -58,7 +58,7 @@ const seedProducts = [
     brand: "Apple",
     category: "Phones",
     price: 79900,
-    image: "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=600&q=80",
+    image: "https://m.media-amazon.com/images/I/71d7rfSl0wL._SL1500_.jpg",
     marketplaces: [
       { name: "Amazon", price: 72999, url: "https://amazon.in/" },
       { name: "Flipkart", price: 71999, url: "https://flipkart.com/" }
@@ -133,7 +133,7 @@ const seedProducts = [
     brand: "Apple",
     category: "Laptops",
     price: 134900,
-    image: "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=600&q=80",
+    image: "https://m.media-amazon.com/images/I/71TPda7cwUL._SL1500_.jpg",
     marketplaces: [
       { name: "Amazon", price: 129990, url: "https://amazon.in/" },
       { name: "Croma", price: 132000, url: "https://croma.com/" }
@@ -332,7 +332,7 @@ const seedProducts = [
     brand: "Sony",
     category: "Gaming",
     price: 54990,
-    image: "https://images.unsplash.com/photo-1607853202273-797f1c22a38e?w=600&q=80",
+    image: "https://m.media-amazon.com/images/I/51SKmu2G9FL._SL1500_.jpg",
     marketplaces: [
       { name: "Amazon", price: 54990, url: "https://amazon.in/" },
       { name: "Flipkart", price: 53990, url: "https://flipkart.com/" }

@@ -2,90 +2,102 @@ import axios from 'axios';
 
 const api = axios.create({
     baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api',
-    headers: {
-        'Content-Type': 'application/json',
-    },
+    headers: { 'Content-Type': 'application/json' },
+    timeout: 15000,
 });
 
-// Add request interceptor for Auth
+// Attach JWT on every request
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem('token');
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
+    if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
 });
 
-export const fetchProducts = async (params = {}) => {
-    try {
-        const response = await api.get('/products', { params });
-        return response.data; // Expected format: { success: true, count: X, data: [{...}] }
-    } catch (error) {
-        throw error.response?.data?.message || 'Failed to fetch products';
+// Auto-logout on 401
+api.interceptors.response.use(
+    res => res,
+    err => {
+        if (err.response?.status === 401) {
+            localStorage.removeItem('token');
+        }
+        return Promise.reject(err);
     }
+);
+
+// ── Products ────────────────────────────────────────────────────────
+export const fetchProducts = async (params = {}) => {
+    const res = await api.get('/products', { params });
+    return res.data;
 };
 
 export const fetchProductById = async (id) => {
-    try {
-        const response = await api.get(`/products/${id}`);
-        return response.data; // Expected format: { success: true, data: {...} }
-    } catch (error) {
-        throw error.response?.data?.message || 'Failed to fetch product details';
-    }
+    const res = await api.get(`/products/${id}`);
+    return res.data;
 };
 
 export const analyzeProduct = async (id) => {
-    try {
-        const response = await api.get(`/products/${id}/analyze`);
-        return response.data; // Expected format: { success: true, data: { analytics: {...}, prediction: {...} } }
-    } catch (error) {
-        throw error.response?.data?.message || 'Failed to analyze product constraints.';
-    }
+    const res = await api.get(`/products/${id}/analyze`);
+    return res.data;
 };
 
+// ── Search ──────────────────────────────────────────────────────────
 export const searchProducts = async (query) => {
-    try {
-        const response = await api.get('/search', { params: { q: query } });
-        return response.data; // { success, query, count, data: [{...}] }
-    } catch (error) {
-        throw error.response?.data?.message || 'Search failed';
-    }
+    const res = await api.get('/search', { params: { q: query } });
+    return res.data;
 };
 
+// ── External ────────────────────────────────────────────────────────
 export const fetchExternalReviews = async (asin, country = 'IN') => {
-    try {
-        const response = await api.get('/products/reviews/external', { params: { asin, country } });
-        return response.data;
-    } catch (error) {
-        throw error.response?.data?.message || 'Failed to fetch reviews';
-    }
+    const res = await api.get('/products/reviews/external', { params: { asin, country } });
+    return res.data;
 };
 
+// ── Watchlist ───────────────────────────────────────────────────────
 export const addToWatchlist = async (watchlistData) => {
-    try {
-        const response = await api.post('/watchlist', watchlistData);
-        return response.data;
-    } catch (error) {
-        throw error.response?.data?.message || 'Failed to add to watchlist';
-    }
+    const res = await api.post('/watchlist', watchlistData);
+    return res.data;
 };
 
 export const getWatchlist = async () => {
-    try {
-        const response = await api.get('/watchlist');
-        return response.data;
-    } catch (error) {
-        throw error.response?.data?.message || 'Failed to fetch watchlist';
-    }
+    const res = await api.get('/watchlist');
+    return res.data;
 };
 
 export const removeFromWatchlist = async (id) => {
-    try {
-        const response = await api.delete(`/watchlist/${id}`);
-        return response.data;
-    } catch (error) {
-        throw error.response?.data?.message || 'Failed to remove from watchlist';
-    }
+    const res = await api.delete(`/watchlist/${id}`);
+    return res.data;
+};
+
+// ── Auth ────────────────────────────────────────────────────────────
+export const loginUser = async (email, password) => {
+    const res = await api.post('/auth/login', { email, password });
+    return res.data;
+};
+
+export const registerUser = async (name, email, password) => {
+    const res = await api.post('/auth/register', { name, email, password });
+    return res.data;
+};
+
+export const getMe = async () => {
+    const res = await api.get('/auth/me');
+    return res.data;
+};
+
+// ── Admin ──────────────────────────────────────────────────────────
+export const getAdminStats = async () => {
+    const res = await api.get('/admin/stats');
+    return res.data;
+};
+
+export const getAdminUsers = async () => {
+    const res = await api.get('/admin/users');
+    return res.data;
+};
+
+export const triggerManualScrape = async () => {
+    const res = await api.post('/admin/refresh-all');
+    return res.data;
 };
 
 export default api;

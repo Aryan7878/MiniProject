@@ -5,7 +5,7 @@ import {
     getOrderById,
     updateOrderStatus,
 } from "../controllers/order.controller.js";
-import { protect } from "../middleware/auth.middleware.js";
+import { protect, authorize } from "../middleware/auth.middleware.js";
 
 const router = Router();
 
@@ -15,6 +15,6 @@ router.use(protect);
 router.post("/", placeOrder);
 router.get("/my", getMyOrders);
 router.get("/:id", getOrderById);
-router.patch("/:id/status", updateOrderStatus);
+router.patch("/:id/status", authorize("admin"), updateOrderStatus);
 
 export default router;

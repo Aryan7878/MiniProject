@@ -1,13 +1,25 @@
 import React, { useState } from 'react';
-import { Bell, BellRing, Loader2, Target, CheckCircle2, X } from 'lucide-react';
+import { Bell, BellRing, Loader2, Target, CheckCircle2, X, AlertCircle } from 'lucide-react';
 import { addToWatchlist } from '../services/api';
+import { useAuth } from '../context/AuthContext';
+import AuthModal from './AuthModal';
 
 const TrackPriceButton = ({ productId, currentPrice }) => {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [targetPrice, setTargetPrice] = useState(Math.round(currentPrice * 0.9));
-    const [loading, setLoading] = useState(false);
-    const [success, setSuccess] = useState(false);
-    const [error, setError] = useState(null);
+    const { isLoggedIn } = useAuth();
+    const [isModalOpen, setIsModalOpen]       = useState(false);
+    const [showAuthModal, setShowAuthModal] = useState(false);
+    const [targetPrice, setTargetPrice]       = useState(Math.round(currentPrice * 0.9));
+    const [loading, setLoading]               = useState(false);
+    const [success, setSuccess]               = useState(false);
+    const [error, setError]                   = useState(null);
+
+    const handleOpenModal = () => {
+        if (!isLoggedIn) {
+            setShowAuthModal(true);
+            return;
+        }
+        setIsModalOpen(true);
+    };
 
     const handleTrack = async () => {
         try {
@@ -24,9 +36,9 @@ const TrackPriceButton = ({ productId, currentPrice }) => {
             setTimeout(() => {
                 setIsModalOpen(false);
                 setSuccess(false);
-            }, 2000);
+            }, 2500);
         } catch (err) {
-            setError(err || "Failed to start tracking. Are you logged in?");
+            setError(typeof err === 'string' ? err : err?.response?.data?.message || "Failed to start tracking.");
         } finally {
             setLoading(false);
         }
@@ -34,69 +46,106 @@ const TrackPriceButton = ({ productId, currentPrice }) => {
 
     return (
         <>
+            {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} />}
+            
             <button
-                onClick={() => setIsModalOpen(true)}
-                className="flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-lg shadow-indigo-500/20 transition-all active:scale-95 group"
+                onClick={handleOpenModal}
+                className="btn-primary"
+                style={{ padding: '0.875rem 1.75rem', borderRadius: '1rem', fontSize: '0.9rem' }}
             >
-                <Bell className="w-5 h-5 group-hover:animate-bounce" />
+                <Bell className="w-5 h-5" />
                 Track Price Drops
             </button>
 
             {/* Modal Overlay */}
             {isModalOpen && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-                    <div className="bg-white dark:bg-gray-800 rounded-3xl w-full max-w-md overflow-hidden shadow-2xl border border-gray-100 dark:border-gray-700 animate-in zoom-in-95 duration-300">
-                        
-                        {/* Modal Header */}
-                        <div className="bg-indigo-600 p-6 text-white relative">
+                <div
+                    onClick={() => setIsModalOpen(false)}
+                    style={{
+                        position: 'fixed', inset: 0, zIndex: 1000,
+                        background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(8px)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem'
+                    }}
+                >
+                    <div
+                        onClick={(e) => e.stopPropagation()}
+                        className="animate-fade-up"
+                        style={{
+                            background: 'rgba(18,18,42,0.98)', border: '1px solid var(--border-subtle)',
+                            borderRadius: '1.5rem', width: '100%', maxWidth: '400px',
+                            boxShadow: '0 25px 60px rgba(0,0,0,0.6), 0 0 40px rgba(139,92,246,0.1)',
+                            overflow: 'hidden'
+                        }}
+                    >
+                        {/* Header */}
+                        <div style={{ background: 'linear-gradient(135deg, #7c3aed, #6366f1)', padding: '1.5rem', position: 'relative' }}>
                             <button 
                                 onClick={() => setIsModalOpen(false)}
-                                className="absolute top-4 right-4 p-1 hover:bg-white/20 rounded-full transition-colors"
+                                style={{
+                                    position: 'absolute', top: '0.75rem', right: '0.75rem',
+                                    background: 'rgba(255,255,255,0.15)', border: 'none',
+                                    borderRadius: '0.5rem', padding: '0.375rem', cursor: 'pointer', color: 'white'
+                                }}
                             >
-                                <X className="w-5 h-5" />
+                                <X className="w-4 h-4" />
                             </button>
-                            <BellRing className="w-10 h-10 mb-3 opacity-90" />
-                            <h3 className="text-xl font-bold">Set Price Alert</h3>
-                            <p className="text-indigo-100 text-sm opacity-80">We'll email you the moment it hits your goal.</p>
+                            <BellRing style={{ width: '2rem', height: '2rem', color: 'white', marginBottom: '0.75rem', opacity: 0.9 }} />
+                            <h3 style={{ fontSize: '1.25rem', fontWeight: 900, color: 'white', letterSpacing: '-0.02em' }}>Set Price Alert</h3>
+                            <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.8rem', marginTop: '0.25rem' }}>We'll notify you the moment it hits your goal.</p>
                         </div>
 
-                        {/* Modal Body */}
-                        <div className="p-8">
+                        {/* Body */}
+                        <div style={{ padding: '1.75rem' }}>
                             {success ? (
-                                <div className="text-center py-4 space-y-4">
-                                    <div className="bg-emerald-100 dark:bg-emerald-500/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto">
-                                        <CheckCircle2 className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
+                                <div style={{ textAlign: 'center', padding: '1rem 0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+                                    <div style={{
+                                        width: '4rem', height: '4rem', borderRadius: '50%',
+                                        background: 'rgba(16,185,129,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                                    }}>
+                                        <CheckCircle2 style={{ width: '2rem', height: '2rem', color: '#10b981' }} />
                                     </div>
                                     <div>
-                                        <h4 className="text-lg font-bold text-gray-900 dark:text-white">Alert Set Successfully!</h4>
-                                        <p className="text-gray-500 dark:text-gray-400 text-sm">Tracking at ₹{Number(targetPrice).toLocaleString()}</p>
+                                        <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-primary)' }}>Alert Set!</h4>
+                                        <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '0.25rem' }}>Tracking at ₹{Number(targetPrice).toLocaleString()}</p>
                                     </div>
                                 </div>
                             ) : (
-                                <div className="space-y-6">
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                                            <Target className="w-3.5 h-3.5 text-indigo-500" /> Target Price (₹)
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
+                                        <label style={{ fontSize: '0.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                            <Target style={{ width: '0.875rem', height: '0.875rem', color: '#a78bfa' }} /> Target Price (₹)
                                         </label>
-                                        <div className="relative">
+                                        <div style={{ position: 'relative' }}>
                                             <input 
                                                 type="number" 
                                                 value={targetPrice}
                                                 onChange={(e) => setTargetPrice(e.target.value)}
-                                                className="w-full bg-gray-50 dark:bg-gray-900/50 border-2 border-gray-100 dark:border-gray-700 rounded-2xl px-5 py-4 text-2xl font-black text-gray-900 dark:text-white focus:border-indigo-500 outline-none transition-all"
-                                                placeholder="Enter target price"
+                                                style={{
+                                                    width: '100%', padding: '1rem 1.25rem',
+                                                    background: 'rgba(12,12,26,0.8)', border: '1px solid var(--border-subtle)',
+                                                    borderRadius: '1rem', color: 'var(--text-primary)', fontSize: '1.5rem',
+                                                    fontWeight: 900, outline: 'none', transition: 'border-color 0.2s'
+                                                }}
+                                                onFocus={e => e.target.style.borderColor = '#7c3aed'}
+                                                onBlur={e => e.target.style.borderColor = 'var(--border-subtle)'}
                                             />
-                                            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">
+                                            <div style={{ position: 'absolute', right: '1.25rem', top: '50%', transform: 'translateY(-50%)', fontWeight: 800, color: 'var(--text-muted)', fontSize: '0.8rem' }}>
                                                 INR
                                             </div>
                                         </div>
-                                        <p className="text-[11px] text-gray-400 italic">
+                                        <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>
                                             Current best is ₹{currentPrice.toLocaleString()}. We suggest {Math.round(currentPrice * 0.9).toLocaleString()}.
                                         </p>
                                     </div>
 
                                     {error && (
-                                        <div className="p-3 bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 rounded-xl text-rose-600 dark:text-rose-400 text-xs font-medium text-center">
+                                        <div style={{
+                                            display: 'flex', alignItems: 'center', gap: '0.5rem',
+                                            padding: '0.75rem', background: 'rgba(239,68,68,0.08)',
+                                            border: '1px solid rgba(239,68,68,0.2)', borderRadius: '0.75rem',
+                                            color: '#f87171', fontSize: '0.75rem', fontWeight: 500
+                                        }}>
+                                            <AlertCircle style={{ width: '1rem', height: '1rem' }} />
                                             {error}
                                         </div>
                                     )}
@@ -104,13 +153,10 @@ const TrackPriceButton = ({ productId, currentPrice }) => {
                                     <button
                                         onClick={handleTrack}
                                         disabled={loading}
-                                        className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 text-white rounded-2xl font-bold text-lg shadow-lg shadow-indigo-500/20 transition-all flex items-center justify-center gap-3 active:scale-[0.98]"
+                                        className="btn-primary"
+                                        style={{ width: '100%', justifyContent: 'center', padding: '1rem', borderRadius: '1rem', fontSize: '0.9rem', opacity: loading ? 0.7 : 1 }}
                                     >
-                                        {loading ? (
-                                            <Loader2 className="w-5 h-5 animate-spin" />
-                                        ) : (
-                                            "Activate Tracker"
-                                        )}
+                                        {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Activate Tracker"}
                                     </button>
                                 </div>
                             )}

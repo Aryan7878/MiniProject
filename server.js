@@ -8,6 +8,7 @@ import productRoutes from "./routes/product.routes.js";
 import searchRoutes from "./routes/search.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import watchlistRoutes from "./routes/watchlist.routes.js";
+import adminRoutes from "./routes/admin.routes.js";
 
 dotenv.config();
 
@@ -40,6 +41,7 @@ app.use("/api/products", productRoutes);
 app.use("/api/search", searchRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/watchlist", watchlistRoutes);
+app.use("/api/admin", adminRoutes);
 
 // ── 404 catch-all ────────────────────────────────────────────────────────────
 app.use((req, res) => {

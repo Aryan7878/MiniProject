@@ -15,7 +15,7 @@ const seedProducts = [
     description: "The ultimate iPhone with aerospace-grade titanium design and A17 Pro chip.",
     price: 159900,
     stock: 120,
-    image: "https://images.unsplash.com/photo-1696446701796-da61225697cc?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=800&q=80",
     marketplaces: [
       { name: "Amazon", price: 156900, url: "https://amazon.in/dp/B0CHX1W1XY" },
       { name: "Flipkart", price: 159900, url: "https://flipkart.com/apple-iphone-15-pro-max" },
@@ -29,7 +29,7 @@ const seedProducts = [
     description: "AI-powered flagship with Titanium frame and 200MP camera.",
     price: 129999,
     stock: 85,
-    image: "https://images.unsplash.com/photo-1707011985338-0248f76d4dbd?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=600&q=80",
     marketplaces: [
       { name: "Amazon", price: 129999, url: "https://amazon.in/dp/B0CSD875F1" },
       { name: "Samsung Store", price: 129999, url: "https://samsung.com/in/smartphones/galaxy-s24-ultra" }
@@ -42,7 +42,7 @@ const seedProducts = [
     description: "Incredible camera and the best AI features directly from Google.",
     price: 106999,
     stock: 45,
-    image: "https://images.unsplash.com/photo-1697368037341-3b52a70404c0?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=600&q=80",
     marketplaces: [
       { name: "Flipkart", price: 104999, url: "https://flipkart.com/google-pixel-8-pro" },
       { name: "Amazon", price: 106999, url: "https://amazon.in/dp/B0CGTV27K7" }
@@ -55,7 +55,7 @@ const seedProducts = [
     description: "Smooth beyond belief. Snapdragon 8 Gen 3 and Hasselblad Camera.",
     price: 64999,
     stock: 150,
-    image: "https://images.unsplash.com/photo-1706857868033-b295bd6b3dd7?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1610792516307-ea5acc9d3942?w=600&q=80",
     marketplaces: [
       { name: "Amazon", price: 63999, url: "https://amazon.in/dp/B0CQPCM1BD" },
       { name: "OnePlus Store", price: 64999, url: "https://oneplus.in/oneplus-12" }
@@ -68,7 +68,7 @@ const seedProducts = [
     description: "Dynamic Island, 48MP Main camera, USB-C. A huge leap.",
     price: 79900,
     stock: 200,
-    image: "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1556656793-062ff9878233?w=600&q=80",
     marketplaces: [
       { name: "Amazon", price: 72999, url: "https://amazon.in/dp/B0CHX68YK9" },
       { name: "Flipkart", price: 71999, url: "https://flipkart.com/apple-iphone-15-blue" }
@@ -81,7 +81,7 @@ const seedProducts = [
     description: "The ultimate foldable with zero-gap hinge and PC-like multitasking.",
     price: 154999,
     stock: 20,
-    image: "https://images.unsplash.com/photo-1692135081273-df33fc11f5cc?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1691435235887-b95086580f84?w=800&q=80",
     marketplaces: [
       { name: "Amazon", price: 150000, url: "https://amazon.in/dp/B0CC9H5R86" },
       { name: "Croma", price: 154999, url: "https://croma.com/samsung-galaxy-z-fold-5" }
@@ -94,7 +94,7 @@ const seedProducts = [
     description: "Come to the bright side. Glyph Interface and Nothing OS 2.0.",
     price: 39999,
     stock: 100,
-    image: "https://images.unsplash.com/photo-1689033322048-52fb3e742ca7?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1689033322048-52fb3e742ca7?w=800&q=80",
     marketplaces: [
       { name: "Flipkart", price: 38999, url: "https://flipkart.com/nothing-phone-2" },
       { name: "Amazon", price: 39999, url: "https://amazon.in/dp/B0C7QS6M27" }
@@ -107,7 +107,7 @@ const seedProducts = [
     description: "Super fast, secure, and packed with Pixel camera magic.",
     price: 38999,
     stock: 180,
-    image: "https://images.unsplash.com/photo-1683935398285-8a2bf61d671f?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1683935398285-8a2bf61d671f?w=800&q=80",
     marketplaces: [
       { name: "Flipkart", price: 37999, url: "https://flipkart.com/google-pixel-7a" }
     ]
@@ -119,7 +119,7 @@ const seedProducts = [
     description: "Awesome camera, awesome screen, awesome battery life.",
     price: 35999,
     stock: 250,
-    image: "https://images.unsplash.com/photo-1682662033066-cd171cd3d596?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1682662033066-cd171cd3d596?w=800&q=80",
     marketplaces: [
       { name: "Amazon", price: 35499, url: "https://amazon.in/dp/B0BZD96472" },
       { name: "Reliance Digital", price: 35999, url: "https://reliancedigital.in/samsung-a54" }
@@ -132,7 +132,7 @@ const seedProducts = [
     description: "Your new superpower. Advanced dual-camera system.",
     price: 52999,
     stock: 300,
-    image: "https://images.unsplash.com/photo-1632661674596-618d8b64d641?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1632661674596-618d8b64d641?w=800&q=80",
     marketplaces: [
       { name: "Amazon", price: 51999, url: "https://amazon.in/dp/B09G9HD6PD" },
       { name: "Flipkart", price: 50999, url: "https://flipkart.com/apple-iphone-13" }
@@ -147,7 +147,7 @@ const seedProducts = [
     description: "Mind-blowing performance with the M3 Max chip and 36GB RAM.",
     price: 349900,
     stock: 30,
-    image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&q=80",
     marketplaces: [
       { name: "Apple Store", price: 349900, url: "https://apple.com/in/shop/buy-mac/macbook-pro/16-inch" },
       { name: "Amazon", price: 345000, url: "https://amazon.in/dp/B0CM5KHQXX" }
@@ -160,7 +160,7 @@ const seedProducts = [
     description: "Lean, mean, M3 machine. Astounding battery life and thin design.",
     price: 134900,
     stock: 140,
-    image: "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1629131726692-1accd0c53ce0?w=800&q=80",
     marketplaces: [
       { name: "Amazon", price: 129990, url: "https://amazon.in/dp/B0CX23H7ZD" },
       { name: "Croma", price: 132000, url: "https://croma.com/apple-macbook-air-15-m3" }
@@ -173,7 +173,7 @@ const seedProducts = [
     description: "Premium Windows laptop with 4K OLED display and RTX 4060.",
     price: 219990,
     stock: 50,
-    image: "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=800&q=80",
     marketplaces: [
       { name: "Dell Store", price: 219990, url: "https://dell.com/en-in/shop/laptops/xps-15" },
       { name: "Amazon", price: 215000, url: "https://amazon.in/dp/B0C4MGR94D" }
@@ -186,7 +186,7 @@ const seedProducts = [
     description: "Incredible gaming power in a thin 14-inch form factor.",
     price: 164990,
     stock: 65,
-    image: "https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=800&q=80",
     marketplaces: [
       { name: "Amazon", price: 159990, url: "https://amazon.in/dp/B0BWHBL4B1" },
       { name: "Flipkart", price: 162990, url: "https://flipkart.com/asus-rog-zephyrus-g14" }
@@ -199,7 +199,7 @@ const seedProducts = [
     description: "Versatile 2-in-1 laptop with stunning gem-cut design.",
     price: 145999,
     stock: 75,
-    image: "https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?w=800&q=80",
     marketplaces: [
       { name: "HP Store", price: 145999, url: "https://hp.com/in-en/shop/laptops/spectre" },
       { name: "Amazon", price: 142000, url: "https://amazon.in/dp/B0BDZZW9QZ" }
@@ -249,7 +249,7 @@ const seedProducts = [
     description: "Still the best value MacBook on the market. Amazing battery.",
     price: 79900,
     stock: 450,
-    image: "https://images.unsplash.com/photo-1606248897732-2c5ffe759c04?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1611186871348-b1ec696e52c9?w=800&q=80",
     marketplaces: [
       { name: "Amazon", price: 69990, url: "https://amazon.in/dp/B08N5W4NNB" },
       { name: "Flipkart", price: 68990, url: "https://flipkart.com/apple-macbook-air-m1" }
@@ -277,7 +277,7 @@ const seedProducts = [
     description: "Industry-leading noise cancellation overhead headphones.",
     price: 29990,
     stock: 320,
-    image: "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=800&q=80",
     marketplaces: [
       { name: "Amazon", price: 26990, url: "https://amazon.in/dp/B09XS7JWHH" },
       { name: "Croma", price: 28990, url: "https://croma.com/sony-wh-1000xm5" }
@@ -290,7 +290,7 @@ const seedProducts = [
     description: "Active Noise Cancellation, Adaptive Audio, and USB-C.",
     price: 24900,
     stock: 500,
-    image: "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=800&q=80",
     marketplaces: [
       { name: "Amazon", price: 22499, url: "https://amazon.in/dp/B0CHX7SNDN" },
       { name: "Flipkart", price: 22999, url: "https://flipkart.com/airpods-pro-2nd-gen" }
@@ -303,7 +303,7 @@ const seedProducts = [
     description: "Immersive audio and world-class noise cancellation from Bose.",
     price: 35900,
     stock: 110,
-    image: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=800&q=80",
     marketplaces: [
       { name: "Amazon", price: 34990, url: "https://amazon.in/dp/B0CCZ26B5V" },
       { name: "Reliance Digital", price: 35900, url: "https://reliancedigital.in/bose-qc-ultra" }
@@ -316,7 +316,7 @@ const seedProducts = [
     description: "60-hour battery life and audiophile-inspired sound.",
     price: 29990,
     stock: 85,
-    image: "https://images.unsplash.com/photo-1598062548091-a6f400ceafdb?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1598062548091-a6f400ceafdb?w=800&q=80",
     marketplaces: [
       { name: "Amazon", price: 24990, url: "https://amazon.in/dp/B0B662CYYQ" }
     ]
@@ -328,7 +328,7 @@ const seedProducts = [
     description: "24-bit Hi-Fi audio and seamless Samsung integration.",
     price: 15999,
     stock: 240,
-    image: "https://images.unsplash.com/photo-1634546594396-857e2bbd0fe3?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1634546594396-857e2bbd0fe3?w=800&q=80",
     marketplaces: [
       { name: "Amazon", price: 13999, url: "https://amazon.in/dp/B0B8CVSJ58" },
       { name: "Samsung Store", price: 15000, url: "https://samsung.com/in/audio/galaxy-buds" }
@@ -341,7 +341,7 @@ const seedProducts = [
     description: "Custom acoustic platform with lossless audio over USB-C.",
     price: 34990,
     stock: 60,
-    image: "https://images.unsplash.com/photo-1584824888795-3bc8b7f7e27e?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1584824888795-3bc8b7f7e27e?w=800&q=80",
     marketplaces: [
       { name: "Amazon", price: 32000, url: "https://amazon.in/dp/B0C8PPFNG8" }
     ]
@@ -353,7 +353,7 @@ const seedProducts = [
     description: "The world's toughest earbuds. Waterproof and dustproof.",
     price: 17999,
     stock: 130,
-    image: "https://images.unsplash.com/photo-1590658268037-6f1115551e24?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1590658268037-6f1115551e24?w=800&q=80",
     marketplaces: [
       { name: "Amazon", price: 16999, url: "https://amazon.in/dp/B0CGVX3GZV" }
     ]
@@ -406,7 +406,7 @@ const seedProducts = [
     description: "Experience lightning-fast loading with an ultra-high-speed SSD.",
     price: 54990,
     stock: 150,
-    image: "https://images.unsplash.com/photo-1607853202273-797f1c22a38e?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=800&q=80",
     marketplaces: [
       { name: "Amazon", price: 54990, url: "https://amazon.in/dp/B08FV5GC28" },
       { name: "Flipkart", price: 53990, url: "https://flipkart.com/sony-playstation-5" }
@@ -419,7 +419,7 @@ const seedProducts = [
     description: "The fastest, most powerful Xbox ever.",
     price: 54990,
     stock: 90,
-    image: "https://images.unsplash.com/photo-1621259182978-fbf93132d53d?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1621259182978-fbf93132d53d?w=800&q=80",
     marketplaces: [
       { name: "Amazon", price: 52990, url: "https://amazon.in/dp/B08J7PR1WM" },
       { name: "Reliance Digital", price: 54990, url: "https://reliancedigital.in/xbox-series-x" }
@@ -432,7 +432,7 @@ const seedProducts = [
     description: "Play at home or on the go with a vibrant 7-inch OLED screen.",
     price: 33990,
     stock: 220,
-    image: "https://images.unsplash.com/photo-1627844641666-6b2158af244c?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1627844641666-6b2158af244c?w=800&q=80",
     marketplaces: [
       { name: "Amazon", price: 31990, url: "https://amazon.in/dp/B098RKWHHZ" }
     ]
@@ -469,7 +469,7 @@ const seedProducts = [
     description: "Windows handheld gaming powerhouse.",
     price: 69990,
     stock: 80,
-    image: "https://images.unsplash.com/photo-1593305841991-05c297ba4575?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1678252431945-8fbfce7ec52c?w=800&q=80",
     marketplaces: [
       { name: "Asus Store", price: 69990, url: "https://asus.com/in/rog-ally" },
       { name: "Amazon", price: 68990, url: "https://amazon.in/dp/B0C8XQYWJD" }
@@ -482,7 +482,7 @@ const seedProducts = [
     description: "Ultra-lightweight wireless esports mouse.",
     price: 13999,
     stock: 300,
-    image: "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=800&q=80",
     marketplaces: [
       { name: "Amazon", price: 12999, url: "https://amazon.in/dp/B0B6YJB2M8" }
     ]
@@ -494,7 +494,7 @@ const seedProducts = [
     description: "Premium gaming audio with active noise cancellation.",
     price: 34999,
     stock: 50,
-    image: "https://images.unsplash.com/photo-1608667508764-33cf0726b13a?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1608667508764-33cf0726b13a?w=800&q=80",
     marketplaces: [
       { name: "Amazon", price: 34000, url: "https://amazon.in/dp/B09ZWY9X18" }
     ]
@@ -518,7 +518,7 @@ const seedProducts = [
     description: "Haptic feedback and adaptive triggers for PS5.",
     price: 5990,
     stock: 500,
-    image: "https://images.unsplash.com/photo-1606318801954-d46d46d3360a?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1606318801954-d46d46d3360a?w=800&q=80",
     marketplaces: [
       { name: "Amazon", price: 5490, url: "https://amazon.in/dp/B08FWMBQTG" },
       { name: "Croma", price: 5990, url: "https://croma.com/sony-dualsense" }
@@ -533,7 +533,7 @@ const seedProducts = [
     description: "Rugged and capable, built for endurance athletes.",
     price: 89900,
     stock: 65,
-    image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80",
     marketplaces: [
       { name: "Amazon", price: 87900, url: "https://amazon.in/dp/B0CHX8W1XY" },
       { name: "Apple Store", price: 89900, url: "https://apple.com/in/watch" }
@@ -546,7 +546,7 @@ const seedProducts = [
     description: "A brighter display and the new Double Tap gesture.",
     price: 41900,
     stock: 200,
-    image: "https://images.unsplash.com/photo-1434493789847-2f02b0c1e6db?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1434493789847-2f02b0c1e6db?w=800&q=80",
     marketplaces: [
       { name: "Amazon", price: 39999, url: "https://amazon.in/dp/B0CHX41XYN" },
       { name: "Flipkart", price: 40999, url: "https://flipkart.com/apple-watch-series-9" }
@@ -559,7 +559,7 @@ const seedProducts = [
     description: "Iconic rotating bezel and advanced health monitoring.",
     price: 36999,
     stock: 140,
-    image: "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=800&q=80",
     marketplaces: [
       { name: "Amazon", price: 34999, url: "https://amazon.in/dp/B0CCSK7K6G" },
       { name: "Samsung Store", price: 36999, url: "https://samsung.com/in/watches" }
@@ -572,7 +572,7 @@ const seedProducts = [
     description: "Multisport GPS watch with solar charging.",
     price: 98990,
     stock: 30,
-    image: "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=800&q=80",
     marketplaces: [
       { name: "Amazon", price: 97500, url: "https://amazon.in/dp/B0CCSK7K" }
     ]
@@ -645,7 +645,7 @@ const seedProducts = [
     description: "A screen-less tracker that monitors recovery, sleep, and strain.",
     price: 24000,
     stock: 120,
-    image: "https://images.unsplash.com/photo-1510017803434-a899398421b3?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1510017803434-a899398421b3?w=800&q=80",
     marketplaces: [
       { name: "Whoop India", price: 24000, url: "https://whoop.com/in" }
     ]

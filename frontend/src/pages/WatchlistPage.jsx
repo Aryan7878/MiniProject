@@ -1,27 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { Bell, Trash2, ExternalLink, Loader2, AlertCircle, ShoppingBag, ArrowRight } from 'lucide-react';
+import { Bell, Trash2, ExternalLink, Loader2, AlertCircle, ShoppingBag, ArrowRight, Target, TrendingDown, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { getWatchlist, removeFromWatchlist } from '../services/api';
 import { useCurrency } from '../context/CurrencyContext';
+import { useAuth } from '../context/AuthContext';
 import { formatCurrency } from '../utils/formatCurrency';
+import AuthModal from '../components/AuthModal';
 
 const WatchlistPage = () => {
     const { currency } = useCurrency();
-    const [items, setItems] = useState([]);
+    const { isLoggedIn } = useAuth();
+    const [items, setItems]   = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [error, setError]   = useState(null);
+    const [showAuth, setShowAuth] = useState(false);
 
     useEffect(() => {
-        loadWatchlist();
-    }, []);
+        if (isLoggedIn) {
+            loadWatchlist();
+        } else {
+            setLoading(false);
+        }
+    }, [isLoggedIn]);
 
     const loadWatchlist = async () => {
         try {
             setLoading(true);
             const res = await getWatchlist();
             setItems(res.data || []);
+            setError(null);
         } catch (err) {
-            setError(err || "Failed to load your watchlist. Are you logged in?");
+            setError(err?.response?.data?.message || 'Failed to load your watchlist.');
         } finally {
             setLoading(false);
         }
@@ -31,130 +40,224 @@ const WatchlistPage = () => {
         try {
             await removeFromWatchlist(id);
             setItems(items.filter(item => item._id !== id));
-        } catch (err) {
-            alert("Failed to remove item.");
+        } catch {
+            alert('Failed to remove item.');
         }
     };
 
-    if (loading) {
+    if (loading) return (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', gap: '1rem' }}>
+            <Loader2 style={{ width: '2rem', height: '2rem', color: '#7c3aed' }} className="animate-spin" />
+            <p style={{ color: 'var(--text-muted)', fontWeight: 600, fontSize: '0.8rem', letterSpacing: '0.05em', textTransform: 'uppercase' }}>Synchronizing alerts…</p>
+        </div>
+    );
+
+    if (!isLoggedIn) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
-                <Loader2 className="w-10 h-10 text-indigo-500 animate-spin" />
-                <p className="text-gray-500 animate-pulse font-medium">Loading your smart alerts...</p>
-            </div>
+            <>
+                {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
+                <div style={{
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                    minHeight: '70vh', textAlign: 'center', gap: '1.5rem'
+                }} className="animate-fade-up">
+                    <div style={{
+                        width: '5rem', height: '5rem', borderRadius: '50%',
+                        background: 'rgba(124,58,237,0.1)', border: '1px solid rgba(139,92,246,0.2)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center'
+                    }}>
+                        <Bell style={{ width: '2rem', height: '2rem', color: '#a78bfa' }} />
+                    </div>
+                    <div>
+                        <h2 style={{ fontSize: '1.75rem', fontWeight: 900, color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>Authentication Required</h2>
+                        <p style={{ color: 'var(--text-muted)', marginTop: '0.5rem', fontSize: '0.9rem', maxWidth: '400px', margin: '0.5rem auto 0' }}>
+                            Sign in to sync your price alerts across devices and get real-time drop notifications.
+                        </p>
+                    </div>
+                    <button onClick={() => setShowAuth(true)} className="btn-primary" style={{ padding: '0.875rem 2rem', borderRadius: '0.875rem' }}>
+                        Sign In / Register
+                    </button>
+                </div>
+            </>
         );
     }
 
     return (
-        <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            {/* Header Section */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-gray-100 dark:border-gray-800 pb-8">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+
+            {/* Header */}
+            <div className="animate-fade-in" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
                 <div>
-                    <h1 className="text-4xl font-black text-gray-900 dark:text-white mb-2 tracking-tight">
-                        My <span className="text-indigo-600">Watchlist</span>
+                    <h1 style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--text-primary)', letterSpacing: '-0.03em' }}>
+                        Alert <span className="gradient-text">Engine</span>
                     </h1>
-                    <p className="text-gray-500 dark:text-gray-400 font-medium">
-                        Tracking {items.length} products for price drops.
+                    <p style={{ color: 'var(--text-secondary)', marginTop: '0.25rem', fontSize: '0.875rem', fontWeight: 500 }}>
+                        Monitoring {items.length} product{items.length !== 1 ? 's' : ''} for market fluctuations.
                     </p>
                 </div>
                 {items.length > 0 && (
-                    <div className="bg-indigo-50 dark:bg-indigo-500/10 px-4 py-2 rounded-full border border-indigo-100 dark:border-indigo-500/20 flex items-center gap-2">
-                        <Bell className="w-4 h-4 text-indigo-600 dark:text-indigo-400 animate-swing" />
-                        <span className="text-xs font-bold text-indigo-700 dark:text-indigo-300 uppercase tracking-wider">Passive Mode Active</span>
+                    <div style={{
+                        display: 'flex', alignItems: 'center', gap: '0.5rem',
+                        padding: '0.5rem 1rem', borderRadius: '0.75rem',
+                        background: 'rgba(124,58,237,0.1)', border: '1px solid rgba(139,92,246,0.2)',
+                        color: '#c4b5fd', fontSize: '0.75rem', fontWeight: 800
+                    }}>
+                        <Sparkles style={{ width: '1rem', height: '1rem' }} />
+                        Real-time tracking active
                     </div>
                 )}
             </div>
 
             {error ? (
-                <div className="bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 p-8 rounded-3xl text-center">
-                    <AlertCircle className="w-12 h-12 text-rose-500 mx-auto mb-4" />
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Authentication Required</h3>
-                    <p className="text-gray-600 dark:text-gray-400 mb-6">{error}</p>
-                    <Link to="/" className="inline-flex items-center px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold transition-all">
-                        Go to Landing Page
-                    </Link>
+                <div style={{
+                    background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)',
+                    borderRadius: '1.25rem', padding: '2rem', textAlign: 'center'
+                }}>
+                    <AlertCircle style={{ width: '2rem', height: '2rem', color: '#f87171', margin: '0 auto 1rem' }} />
+                    <p style={{ color: '#fca5a5', fontWeight: 500 }}>{error}</p>
+                    <button onClick={loadWatchlist} style={{ marginTop: '1rem', color: '#f87171', background: 'none', border: 'none', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}>
+                        Try Again
+                    </button>
                 </div>
             ) : items.length === 0 ? (
-                <div className="bg-gray-50 dark:bg-gray-800/40 border-2 border-dashed border-gray-200 dark:border-gray-700 p-16 rounded-[2rem] text-center space-y-6">
-                    <div className="bg-white dark:bg-gray-800 w-20 h-20 rounded-full shadow-lg flex items-center justify-center mx-auto">
-                        <ShoppingBag className="w-10 h-10 text-gray-300" />
+                <div style={{
+                    background: 'rgba(18,18,42,0.5)', border: '2px dashed var(--border-subtle)',
+                    borderRadius: '1.5rem', padding: '6rem 2rem', textAlign: 'center',
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.25rem'
+                }} className="animate-fade-up">
+                    <div style={{
+                        width: '4.5rem', height: '4.5rem', borderRadius: '1.25rem',
+                        background: 'rgba(12,12,26,0.5)', border: '1px solid var(--border-subtle)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center'
+                    }}>
+                        <ShoppingBag style={{ width: '2rem', height: '2rem', color: 'var(--text-muted)' }} />
                     </div>
                     <div>
-                        <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Your watchlist is empty</h3>
-                        <p className="text-gray-500 dark:text-gray-400 mt-2 max-w-sm mx-auto font-medium">
-                            Start tracking products to see them here and get notified when the price hits your target.
+                        <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)' }}>Engine Standby</h3>
+                        <p style={{ color: 'var(--text-muted)', marginTop: '0.5rem', fontSize: '0.875rem', maxWidth: '380px' }}>
+                            You aren't tracking any items yet. Add products to get notified of the next major price drop.
                         </p>
                     </div>
-                    <Link to="/products" className="inline-flex items-center px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-bold shadow-xl shadow-indigo-500/20 transition-all active:scale-95">
-                        Discover Products <ArrowRight className="w-5 h-5 ml-2" />
+                    <Link to="/products" className="btn-primary" style={{ textDecoration: 'none', marginTop: '0.5rem' }}>
+                        Explore Marketplace <ArrowRight style={{ width: '1.1rem', height: '1.1rem' }} />
                     </Link>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {items.map((item) => (
-                        <div 
-                            key={item._id} 
-                            className="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-xl hover:-translate-y-1 transition-all group relative overflow-hidden"
-                        >
-                            {/* Status logic */}
-                            {!item.isActive && (
-                                <div className="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] font-black uppercase tracking-tighter px-3 py-1 rounded-bl-xl z-10 shadow-sm">
-                                    Alert Sent
-                                </div>
-                            )}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}
+                    className="animate-fade-in">
+                    {items.map((item) => {
+                        const alertSent = !item.isActive;
+                        const priceDiff = item.initialPrice - item.targetPrice;
+                        const pct = item.initialPrice > 0 ? ((priceDiff / item.initialPrice) * 100).toFixed(0) : 0;
 
-                            <div className="flex gap-4 mb-6">
-                                <div className="w-20 h-20 bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-2 border border-gray-100 dark:border-gray-600 flex items-center justify-center flex-shrink-0">
-                                    <img 
-                                        src={item.product?.image || `https://via.placeholder.com/200?text=${item.product?.name}`} 
-                                        alt={item.product?.name}
-                                        className="max-w-full max-h-full object-contain"
-                                    />
+                        return (
+                            <div key={item._id} className="glass-card" style={{ padding: '0', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+                                {/* Image & Info */}
+                                <div style={{ padding: '1.25rem', display: 'flex', gap: '1rem', borderBottom: '1px solid var(--border-subtle)' }}>
+                                    <div style={{
+                                        width: '4.5rem', height: '4.5rem', borderRadius: '0.75rem', flexShrink: 0,
+                                        background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.5rem'
+                                    }}>
+                                        <img
+                                            src={item.product?.image || `https://via.placeholder.com/100?text=P`}
+                                            alt={item.product?.name}
+                                            style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+                                        />
+                                    </div>
+                                    <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                                        <h4 style={{
+                                            fontWeight: 700, fontSize: '0.9rem', color: 'var(--text-primary)',
+                                            whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'
+                                        }}>
+                                            {item.product?.name}
+                                        </h4>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.25rem' }}>
+                                            <span style={{ fontSize: '0.65rem', fontWeight: 800, textTransform: 'uppercase', color: '#a78bfa' }}>
+                                                {item.product?.brand || 'Premium'}
+                                            </span>
+                                            <div style={{ width: '3px', height: '3px', borderRadius: '50%', background: 'var(--border-subtle)' }} />
+                                            <span style={{ fontSize: '0.65rem', fontWeight: 700, color: 'var(--text-muted)' }}>
+                                                {item.product?.category}
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="flex-1 min-w-0">
-                                    <h4 className="font-bold text-gray-900 dark:text-white truncate group-hover:text-indigo-600 transition-colors">
-                                        {item.product?.name}
-                                    </h4>
-                                    <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mt-1">
-                                        {item.product?.brand || 'Generic'}
-                                    </p>
-                                </div>
-                            </div>
 
-                            <div className="space-y-4">
-                                <div className="grid grid-cols-2 gap-3">
-                                    <div className="bg-gray-50 dark:bg-gray-900/40 p-3 rounded-2xl border border-gray-100 dark:border-gray-700">
-                                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Target</p>
-                                        <p className="text-lg font-black text-indigo-600 dark:text-indigo-400">
+                                {/* Metrics */}
+                                <div style={{ padding: '1.25rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', background: 'rgba(12,12,26,0.3)' }}>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.375rem' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+                                            <Target style={{ width: '0.75rem', height: '0.75rem', color: '#a78bfa' }} />
+                                            <span style={{ fontSize: '0.6rem', fontWeight: 900, textTransform: 'uppercase', color: 'var(--text-muted)' }}>Target</span>
+                                        </div>
+                                        <p style={{ fontSize: '1.1rem', fontWeight: 950, color: '#c4b5fd' }}>
                                             {formatCurrency(item.targetPrice, currency)}
                                         </p>
                                     </div>
-                                    <div className="bg-gray-50 dark:bg-gray-900/40 p-3 rounded-2xl border border-gray-100 dark:border-gray-700">
-                                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Initial</p>
-                                        <p className="text-lg font-black text-gray-400">
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.375rem' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+                                            <TrendingDown style={{ width: '0.75rem', height: '0.75rem', color: '#10b981' }} />
+                                            <span style={{ fontSize: '0.6rem', fontWeight: 900, textTransform: 'uppercase', color: 'var(--text-muted)' }}>Initial</span>
+                                        </div>
+                                        <p style={{ fontSize: '1.1rem', fontWeight: 950, color: 'var(--text-primary)' }}>
                                             {formatCurrency(item.initialPrice, currency)}
                                         </p>
                                     </div>
                                 </div>
 
-                                <div className="flex items-center justify-between pt-4 border-t border-gray-50 dark:border-gray-700">
-                                    <Link 
+                                {/* Footer & Actions */}
+                                <div style={{ padding: '1rem 1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto', borderTop: '1px solid var(--border-subtle)' }}>
+                                    <Link
                                         to={`/products/${item.product?._id}`}
-                                        className="text-xs font-bold text-gray-500 hover:text-indigo-600 flex items-center gap-1.5 transition-colors"
+                                        style={{
+                                            display: 'flex', alignItems: 'center', gap: '0.375rem',
+                                            fontSize: '0.75rem', fontWeight: 800, color: '#7c3aed',
+                                            textDecoration: 'none'
+                                        }}
                                     >
-                                        View Details <ExternalLink className="w-3.5 h-3.5" />
+                                        Engine View <ExternalLink style={{ width: '0.75rem', height: '0.75rem' }} />
                                     </Link>
-                                    <button 
-                                        onClick={() => handleDelete(item._id)}
-                                        className="p-2.5 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-xl transition-all"
-                                        title="Delete Alert"
-                                    >
-                                        <Trash2 className="w-4.5 h-4.5" />
-                                    </button>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                        {pct > 0 && (
+                                           <div style={{ fontSize: '0.7rem', fontWeight: 900, color: '#10b981', background: 'rgba(16,185,129,0.1)', padding: '0.25rem 0.625rem', borderRadius: '99px' }}>
+                                               -{pct}%
+                                           </div>
+                                        )}
+                                        <button
+                                            onClick={() => handleDelete(item._id)}
+                                            style={{
+                                                padding: '0.5rem', borderRadius: '0.5rem',
+                                                background: 'rgba(239,68,68,0.1)', border: 'none',
+                                                color: '#f87171', cursor: 'pointer', transition: 'all 0.2s',
+                                                display: 'flex', alignItems: 'center', justifyContent: 'center'
+                                            }}
+                                            onMouseOver={e => e.currentTarget.style.background = 'rgba(239,68,68,0.2)'}
+                                            onMouseOut={e => e.currentTarget.style.background = 'rgba(239,68,68,0.1)'}
+                                        >
+                                            <Trash2 style={{ width: '1rem', height: '1rem' }} />
+                                        </button>
+                                    </div>
                                 </div>
+
+                                {/* Alert sent overlay */}
+                                {alertSent && (
+                                    <div style={{
+                                        position: 'absolute', inset: 0, 
+                                        background: 'rgba(18,18,42,0.6)', backdropFilter: 'blur(2px)',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        zIndex: 10
+                                    }}>
+                                        <div style={{
+                                            background: '#10b981', color: 'white',
+                                            padding: '0.4rem 1rem', borderRadius: '99px',
+                                            fontSize: '0.75rem', fontWeight: 900, boxShadow: '0 4px 12px rgba(16,185,129,0.4)'
+                                        }}>
+                                            THRESHOLD REACHED ✓
+                                        </div>
+                                    </div>
+                                )}
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             )}
         </div>
