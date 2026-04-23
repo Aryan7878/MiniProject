@@ -187,7 +187,7 @@ const ProductsPage = () => {
             ) : filtered.length > 0 ? (
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))', gap: '1.25rem' }}
                     className="animate-fade-in">
-                    {filtered.map(p => <ProductCard key={p._id} product={p} />)}
+                    {filtered.map(p => <ProductCard key={p._id || p.id || p.name} product={p} />)}
                 </div>
             ) : (
                 <div style={{

@@ -10,6 +10,7 @@
     "frontend": "npm run dev --prefix frontend",
     "dev:all": "concurrently \"npm run dev\" \"npm run frontend\"",
     "seed": "node scripts/seed.js",
+    "refresh:images": "node scripts/refreshProductImages.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

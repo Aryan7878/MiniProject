@@ -1,11 +1,18 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const CompareContext = createContext();
+const getProductId = (product = {}) => product?._id || product?.id || null;
+const hasValidId = (product = {}) => Boolean(getProductId(product));
 
 export const CompareProvider = ({ children }) => {
     const [compareItems, setCompareItems] = useState(() => {
         const saved = localStorage.getItem('compare_items');
-        return saved ? JSON.parse(saved) : [];
+        if (!saved) return [];
+        try {
+            return JSON.parse(saved).filter(hasValidId);
+        } catch {
+            return [];
+        }
     });
 
     useEffect(() => {
@@ -13,18 +20,22 @@ export const CompareProvider = ({ children }) => {
     }, [compareItems]);
 
     const addToCompare = (product) => {
-        if (compareItems.find(item => item._id === product._id || item.id === product.id)) {
+        const productId = getProductId(product);
+        if (!productId) {
+            return { error: 'Unable to compare this product right now' };
+        }
+        if (compareItems.find(item => getProductId(item) === productId)) {
             return { error: 'Product already in comparison' };
         }
         if (compareItems.length >= 4) {
             return { error: 'You can compare up to 4 products only' };
         }
-        setCompareItems([...compareItems, product]);
+        setCompareItems(prev => [...prev, product]);
         return { success: true };
     };
 
     const removeFromCompare = (productId) => {
-        setCompareItems(compareItems.filter(item => (item._id !== productId && item.id !== productId)));
+        setCompareItems(prev => prev.filter(item => getProductId(item) !== productId));
     };
 
     const clearCompare = () => {

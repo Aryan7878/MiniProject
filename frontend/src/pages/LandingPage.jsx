@@ -97,7 +97,7 @@ const LandingPage = () => {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '1.25rem' }}>
                 {loading
                     ? [...Array(4)].map((_, i) => <ProductSkeleton key={i} />)
-                    : data.map(p => <ProductCard key={p._id} product={p} />)
+                    : data.map(p => <ProductCard key={p._id || p.id || p.name} product={p} />)
                 }
             </div>
         </section>

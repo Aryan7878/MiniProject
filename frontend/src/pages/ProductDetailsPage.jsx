@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router-dom';
 import { fetchProductById, analyzeProduct } from '../services/api';
 import { useCurrency } from '../context/CurrencyContext';
 import { formatCurrency } from '../utils/formatCurrency';
+import { getMarketplaceSearchUrl } from '../utils/marketplaceUrl';
 import PriceChart from '../components/PriceChart';
 import BuyBadge from '../components/BuyBadge';
 import TrackPriceButton from '../components/TrackPriceButton';
@@ -102,7 +103,12 @@ const ProductDetailsPage = () => {
                             width: '240px', height: '240px', borderRadius: '1.5rem', background: 'white',
                             display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem', flexShrink: 0
                         }}>
-                            <img src={product.image || product.imageUrl} alt={product.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+                            <img
+                                src={product.image || product.imageUrl || 'https://placehold.co/600x400/12122a/a78bfa?text=SmartCart'}
+                                alt={product.name}
+                                style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+                                onError={(e) => { e.currentTarget.src = 'https://placehold.co/600x400/12122a/a78bfa?text=No+Preview'; }}
+                            />
                         </div>
 
                         {/* Text */}
@@ -159,7 +165,7 @@ const ProductDetailsPage = () => {
                                     <p style={{ fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '0.125rem' }}>{m.name}</p>
                                     <p style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-primary)' }}>{formatCurrency(m.price, currency)}</p>
                                 </div>
-                                <a href={m.url || m.link} target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ padding: '0.5rem 1rem', borderRadius: '0.625rem', fontSize: '0.75rem', textDecoration: 'none' }}>
+                                <a href={getMarketplaceSearchUrl(m.name, product.name)} target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ padding: '0.5rem 1rem', borderRadius: '0.625rem', fontSize: '0.75rem', textDecoration: 'none' }}>
                                     Buy <ExternalLink style={{ width: '0.875rem' }} />
                                 </a>
                             </div>
