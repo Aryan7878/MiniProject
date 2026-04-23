@@ -6,7 +6,10 @@ import Analytics from "../models/analytics.model.js";
 
 dotenv.config();
 
-const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/smartcart";
+const MONGO_URI = process.env.MONGO_URI;
+if (!MONGO_URI) {
+  throw new Error("MONGO_URI is missing. Set it in your environment before running seed.");
+}
 
 const UNSPLASH_BY_CATEGORY = {
   Phones: [

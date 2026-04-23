@@ -7,7 +7,10 @@ import { scrapeAmazonProducts } from "../services/amazonScraper.service.js";
 
 dotenv.config();
 
-const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/smartcart";
+const MONGO_URI = process.env.MONGO_URI;
+if (!MONGO_URI) {
+  throw new Error("MONGO_URI is missing. Set it in your environment before running image refresh.");
+}
 
 const http = axios.create({
   timeout: 20000,
@@ -194,9 +197,14 @@ const resolveProductImageWithBrowser = async (page, product) => {
 };
 
 const main = async () => {
-  console.log("[Images] Connecting to MongoDB…");
-  await mongoose.connect(MONGO_URI);
-  console.log("[Images] Connected.");
+  try {
+    console.log("[Images] Connecting to MongoDB...");
+    await mongoose.connect(MONGO_URI);
+    console.log("[Images] Connected.");
+  } catch (error) {
+    console.error("[Images] MongoDB connection failed:", error?.message || error);
+    process.exit(1);
+  }
 
   const products = await Product.find({}).select("_id name image marketplaces").lean();
   console.log(`[Images] Found ${products.length} products.`);
