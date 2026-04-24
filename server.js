@@ -9,6 +9,8 @@ import searchRoutes from "./routes/search.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import watchlistRoutes from "./routes/watchlist.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
+import path from "path";
+import { fileURLToPath } from "url";
 
 dotenv.config();
 
@@ -42,6 +44,23 @@ app.use("/api/search", searchRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/watchlist", watchlistRoutes);
 app.use("/api/admin", adminRoutes);
+
+// ── Serve Frontend static files in production ────────────────────────────────
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+if (process.env.NODE_ENV === "production") {
+    // Set static folder
+    app.use(express.static(path.join(__dirname, "frontend/dist")));
+
+    // Any route that is not an API route should serve the index.html
+    app.get(/.*/, (req, res, next) => {
+        if (req.originalUrl.startsWith("/api")) {
+            return next();
+        }
+        res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
+    });
+}
 
 // ── 404 catch-all ────────────────────────────────────────────────────────────
 app.use((req, res) => {

@@ -9,6 +9,7 @@
     "dev": "nodemon server.js",
     "frontend": "npm run dev --prefix frontend",
     "dev:all": "concurrently \"npm run dev\" \"npm run frontend\"",
+    "build": "npm install --prefix frontend && npm run build --prefix frontend",
     "seed": "node scripts/seed.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
