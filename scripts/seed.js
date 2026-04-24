@@ -1,10 +1,133 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import Product from "../models/product.model.js";
+import PriceHistory from "../models/priceHistory.model.js";
+import Analytics from "../models/analytics.model.js";
 
 dotenv.config();
 
-const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/smartcart";
+const MONGO_URI = process.env.MONGO_URI;
+if (!MONGO_URI) {
+  throw new Error("MONGO_URI is missing. Set it in your environment before running seed.");
+}
+
+const UNSPLASH_BY_CATEGORY = {
+  Phones: [
+    "photo-1511707171634-5f897ff02aa9",
+    "photo-1510552776732-03e61cf4b144",
+    "photo-1598327105666-5b89351aff97",
+  ],
+  Laptops: [
+    "photo-1517336714731-489689fd1ca8",
+    "photo-1515879218367-8466d910aaa4",
+    "photo-1496181133206-80ce9b88a853",
+  ],
+  Audio: [
+    "photo-1518441902117-f0a3b3d2d4fd",
+    "photo-1519671482749-fd09be7ccebf",
+    "photo-1546435770-a3e426bf472b",
+  ],
+  Gaming: [
+    "photo-1606144042614-b2417e99c4e3",
+    "photo-1603481546579-65d935ba9cdd",
+    "photo-1612287230202-1ff1d85d1bdf",
+  ],
+  Wearables: [
+    "photo-1523275335684-37898b6baf30",
+    "photo-1546868871-7041f2a55e12",
+    "photo-1508685096489-7aacd43bd3b1",
+  ],
+  default: [
+    "photo-1523275335684-37898b6baf30",
+    "photo-1517336714731-489689fd1ca8",
+    "photo-1511707171634-5f897ff02aa9",
+  ],
+};
+
+const stableIndex = (str, mod) => {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) >>> 0;
+  return mod ? h % mod : 0;
+};
+
+const makeUnsplashImageUrl = (photoId) =>
+  `https://images.unsplash.com/${photoId}?auto=format&fit=crop&w=900&q=80`;
+
+const makeMarketplaceSearchUrl = (marketplaceName, productName) => {
+  const q = encodeURIComponent(productName || "");
+  const name = (marketplaceName || "").toLowerCase();
+
+  if (name.includes("amazon")) return `https://www.amazon.in/s?k=${q}`;
+  if (name.includes("flipkart")) return `https://www.flipkart.com/search?q=${q}`;
+  if (name.includes("croma")) return `https://www.croma.com/searchB?q=${q}`;
+  if (name.includes("reliance")) return `https://www.reliancedigital.in/search?q=${q}`;
+  if (name.includes("samsung")) return `https://www.samsung.com/in/search/?searchvalue=${q}`;
+  if (name.includes("oneplus")) return `https://www.oneplus.in/search?keyword=${q}`;
+  if (name.includes("lenovo")) return `https://www.lenovo.com/in/en/search?text=${q}`;
+  if (name.includes("dell")) return `https://www.dell.com/en-in/search/${q}`;
+  if (name.includes("hp")) return `https://www.hp.com/in-en/search?q=${q}`;
+  if (name.includes("garmin")) return `https://www.google.com/search?q=${encodeURIComponent(`garmin ${productName}`)}`;
+  if (name.includes("apple")) return `https://www.apple.com/in/search/${q}`;
+
+  // Fallback: Google query for the store + product
+  return `https://www.google.com/search?q=${encodeURIComponent(`${marketplaceName} ${productName}`)}`;
+};
+
+const looksLikeValidUrl = (url) => typeof url === "string" && /^https?:\/\/\S+/i.test(url);
+
+const isPlaceholderProductUrl = (url) => {
+  if (!url) return true;
+  return /\/dp\/B0?7XYZ/i.test(url) || /example\.com/i.test(url);
+};
+
+const sanitizeSeedProduct = (p) => {
+  const list = UNSPLASH_BY_CATEGORY[p.category] || UNSPLASH_BY_CATEGORY.default;
+  const idx = stableIndex(`${p.name}|${p.brand}|${p.category}`, list.length);
+
+  const marketplaces = Array.isArray(p.marketplaces)
+    ? p.marketplaces.map((m) => {
+        const url = m?.url;
+        const safeUrl =
+          looksLikeValidUrl(url) && !isPlaceholderProductUrl(url)
+            ? url
+            : makeMarketplaceSearchUrl(m?.name, p?.name);
+        return { ...m, url: safeUrl };
+      })
+    : [];
+
+  return {
+    ...p,
+    image: makeUnsplashImageUrl(list[idx]),
+    marketplaces,
+  };
+};
+
+const randomBetween = (min, max) => min + Math.random() * (max - min);
+
+const generateHistory = (basePrice, days = 30) => {
+  const now = new Date();
+  const points = [];
+
+  // Random walk around basePrice with mild volatility.
+  let price = Math.max(1, Math.round(basePrice * randomBetween(0.93, 1.05)));
+  const dailyVol = randomBetween(0.004, 0.02); // 0.4% – 2% moves
+
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date(now);
+    d.setDate(now.getDate() - i);
+    d.setHours(12, 0, 0, 0);
+
+    const direction = Math.random() < 0.5 ? -1 : 1;
+    const move = 1 + direction * randomBetween(0, dailyVol);
+    price = Math.max(1, Math.round(price * move));
+
+    points.push({ date: d, price });
+  }
+
+  // Nudge last point close to basePrice so "current" feels realistic.
+  points[points.length - 1].price = Math.max(1, Math.round(basePrice * randomBetween(0.98, 1.02)));
+  return points;
+};
 
 const seedProducts = [
   // ──── Phones ────
@@ -658,13 +781,36 @@ const seedDB = async () => {
         await mongoose.connect(MONGO_URI);
         console.log("Connected successfully.");
 
-        console.log("Emptying old products...");
+        console.log("Emptying old products + intelligence data...");
         await Product.deleteMany({});
+        await PriceHistory.deleteMany({});
+        await Analytics.deleteMany({});
 
         console.log(`Seeding ${seedProducts.length} high-quality tech products...`);
-        await Product.insertMany(seedProducts);
+        const inserted = await Product.insertMany(seedProducts.map(sanitizeSeedProduct));
+
+        console.log("Generating realistic 30-day price history for charts...");
+        const historyDocs = [];
+        for (const p of inserted) {
+          const base =
+            Array.isArray(p.marketplaces) && p.marketplaces.length > 0
+              ? Math.min(...p.marketplaces.map((m) => m.price))
+              : p.price;
+
+          const series = generateHistory(base, 30);
+          for (const point of series) {
+            historyDocs.push({
+              productId: p._id,
+              source: "seed",
+              price: point.price,
+              date: point.date,
+              discountShown: 0,
+            });
+          }
+        }
+        await PriceHistory.insertMany(historyDocs);
         
-        console.log("✅ Seed complete! You now have a fully scalable realistic catalog.");
+        console.log("✅ Seed complete! Products + price history are ready for graphs.");
         process.exit(0);
     } catch (error) {
         console.error("❌ Seeding failed:", error);

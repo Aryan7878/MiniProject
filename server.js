@@ -16,11 +16,28 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const isProduction = process.env.NODE_ENV === "production";
+const allowedOrigins = [
+    process.env.CLIENT_URL,
+    ...(process.env.CLIENT_URLS || "").split(","),
+]
+    .map((origin) => origin?.trim())
+    .filter(Boolean);
 
 // ── Security & parsing middleware ─────────────────────────────────────────────
 app.use(
     cors({
-        origin: process.env.CLIENT_URL || "*",
+        origin(origin, callback) {
+            if (!origin) return callback(null, true);
+            if (allowedOrigins.includes(origin)) return callback(null, true);
+
+            // During local development, Vite may pick a different localhost port.
+            if (!isProduction && (/^http:\/\/localhost:\d+$/i.test(origin) || /^http:\/\/127\.0\.0\.1:\d+$/i.test(origin))) {
+                return callback(null, true);
+            }
+
+            return callback(new Error("Not allowed by CORS"));
+        },
         methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
         allowedHeaders: ["Content-Type", "Authorization"],
     })
@@ -76,7 +93,7 @@ const startServer = async () => {
         await connectDB();
         startPriceTrackerJob(); // Init background scraping cycle
         app.listen(PORT, () => {
-            console.log(`🚀 SmartCart server running on http://localhost:${PORT}`);
+            console.log(`🚀 SmartCart server running on port ${PORT}`);
         });
     } catch (error) {
         console.error("Failed to start server:", error.message);

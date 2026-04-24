@@ -14,7 +14,8 @@ const MARKETPLACE_BADGE_STYLE = {
 const ProductCard = ({ product }) => {
     const { currency } = useCurrency();
     const { compareItems, addToCompare, removeFromCompare } = useCompare();
-    const isComparing = compareItems.find(item => item._id === product._id);
+    const productId = product?._id || product?.id;
+    const isComparing = compareItems.find(item => (item?._id || item?.id) === productId);
 
     const bestPrice = product.marketplaces?.length > 0
         ? Math.min(...product.marketplaces.map(m => m.price))
@@ -25,7 +26,7 @@ const ProductCard = ({ product }) => {
 
     const handleCompare = (e) => {
         e.preventDefault();
-        isComparing ? removeFromCompare(product._id) : addToCompare(product);
+        isComparing ? removeFromCompare(productId) : addToCompare(product);
     };
 
     return (
@@ -123,7 +124,7 @@ const ProductCard = ({ product }) => {
                 {/* Actions */}
                 <div style={{ display: 'flex', gap: '0.5rem', marginTop: 'auto', paddingTop: '0.5rem' }}>
                     <Link
-                        to={`/products/${product._id}`}
+                        to={`/products/${productId}`}
                         style={{
                             flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.375rem',
                             padding: '0.5rem', borderRadius: '0.625rem', textDecoration: 'none',

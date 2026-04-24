@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { analyzeProduct } from '../services/api';
 import BuyBadge from '../components/BuyBadge';
+import { getMarketplaceSearchUrl } from '../utils/marketplaceUrl';
 
 const ComparisonPage = () => {
     const { compareItems, removeFromCompare, clearCompare } = useCompare();
@@ -157,7 +158,7 @@ const ComparisonPage = () => {
 
                                         {/* Buy Button */}
                                         <a 
-                                            href={(item.marketplaces?.[0]?.url || item.marketplaces?.[0]?.link) || '#'}
+                                            href={getMarketplaceSearchUrl(item.marketplaces?.[0]?.name || '', item.name)}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="btn-primary"
