@@ -19,7 +19,7 @@ const NAV_LINKS = [
     { to: '/admin',     icon: ShieldAlert,      label: 'Admin CMDR',    adminOnly: true },
 ];
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, onClose }) => {
     const { compareItems }          = useCompare();
     const { currency, toggleCurrency } = useCurrency();
     const { user, logout, isLoggedIn } = useAuth();
@@ -40,7 +40,15 @@ const Sidebar = () => {
         <>
             {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
 
-            <aside className="sidebar">
+            <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
+                {/* Mobile Close Button */}
+                <button 
+                  onClick={onClose}
+                  className="lg:hidden absolute right-4 top-4 p-2 text-white/50 hover:text-white"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+
                 {/* Logo */}
                 <NavLink to="/" className="flex items-center gap-2.5 px-2 mb-8 no-underline">
                     <div className="w-8 h-8 rounded-xl flex items-center justify-center"
