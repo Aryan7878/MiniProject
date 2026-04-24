@@ -42,6 +42,7 @@ const ProductCard = ({ product }) => {
                     alt={product.name}
                     style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', transition: 'transform 0.4s ease' }}
                     onError={(e) => { e.target.src = 'https://placehold.co/600x400/12122a/a78bfa?text=No+Preview'; }}
+                    referrerPolicy="no-referrer"
                     className="card-img"
                 />
 

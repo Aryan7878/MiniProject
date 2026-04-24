@@ -17,7 +17,7 @@ const seedProducts = [
     brand: "Apple",
     category: "Phones",
     price: 159900,
-    image: "https://www.apple.com/v/iphone-15-pro/c/images/overview/copy/iphone_15__fntscstj6v6q_large.jpg",
+    image: "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=600&q=80",
     marketplaces: [
       { name: "Amazon", price: 156900, url: "https://www.amazon.in/dp/B0CHX1W1XY" },
       { name: "Flipkart", price: 159900, url: "https://www.flipkart.com/apple-iphone-15-pro-max-black-titanium-256-gb/p/itmd8737d9237644" },
@@ -29,7 +29,7 @@ const seedProducts = [
     brand: "Samsung",
     category: "Phones",
     price: 129999,
-    image: "https://images.samsung.com/is/image/samsung/p6pim/in/2401/gallery/in-galaxy-s24-s928-sm-s928bztqins-539573351?$650_519_PNG$",
+    image: "https://images.unsplash.com/photo-1678912448373-673ce5cf3301?w=600&q=80",
     marketplaces: [
       { name: "Amazon", price: 129999, url: "https://www.amazon.in/dp/B0CS5X68D6" },
       { name: "Samsung Store", price: 129999, url: "https://www.samsung.com/in/smartphones/galaxy-s24-ultra/" }
