@@ -7,7 +7,7 @@ import AuthModal from './AuthModal';
 import {
     LayoutDashboard, Search, BookMarked, Layers, ShoppingCart,
     IndianRupee, DollarSign, MessageSquare, Settings, ChevronRight,
-    Sparkles, LogIn, LogOut, User, ChevronDown, ShieldAlert
+    Sparkles, LogIn, LogOut, User, ChevronDown, ShieldAlert, X
 } from 'lucide-react';
 
 const NAV_LINKS = [
