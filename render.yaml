@@ -1,12 +1,10 @@
 services:
   - type: web
-    name: smartcart-api
+    name: smartcart-unified
     env: node
     plan: free
-    rootDir: .
-    buildCommand: npm install
-    startCommand: npm start
-    healthCheckPath: /api/health
+    buildCommand: npm run build
+    startCommand: node server.js
     envVars:
       - key: NODE_ENV
         value: production
@@ -14,21 +12,17 @@ services:
         value: 5000
       - key: MONGO_URI
         sync: false
-      - key: JWT_SECRET
-        sync: false
-      - key: RAPIDAPI_KEY
-        sync: false
       - key: CLIENT_URL
         sync: false
-      - key: CLIENT_URLS
+      - key: JWT_SECRET
+        generateValue: true
+      - key: RAPIDAPI_KEY
         sync: false
-
-  - type: web
-    name: smartcart-frontend
-    env: static
-    rootDir: frontend
-    buildCommand: npm install && npm run build
-    staticPublishPath: dist
-    envVars:
-      - key: VITE_API_BASE_URL
+      - key: SERPAPI_KEY
         sync: false
+      - key: RAPIDAPI_HOST
+        value: real-time-amazon-data.p.rapidapi.com
+      - key: FLIPKART_RAPIDAPI_HOST
+        value: real-time-flipkart-data2.p.rapidapi.com
+      - key: UNIFIED_PRODUCT_RAPIDAPI_HOST
+        value: realtime-flipkart-amazon-myntra-ajio-croma-product-details.p.rapidapi.com
